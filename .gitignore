@@ -1,0 +1,12 @@
+.vscode
+/.bundle/
+/.yardoc
+/_yardoc/
+/coverage/
+/doc/
+/pkg/
+/spec/reports/
+/tmp/
+node_modules/
+*~
+.byebug_history
