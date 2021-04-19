@@ -2,10 +2,11 @@
 
 # require "rails/engine"
 # require "singleton"
-
 # require "active_support/all"
-# require "active_entity/railtie"
+
+require "active_entity/railtie"
 require "all_futures/version"
+require "all_futures/possibility"
 
 module AllFutures
   # class Engine < Rails::Engine
