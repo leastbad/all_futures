@@ -36,7 +36,7 @@ Yes, All Futures is for **you**.
 
 ## How does All Futures work?
 
-First, set up an All Futures class that defines some attributes:
+First, set up an All Futures class that defines some [attributes](https://api.rubyonrails.org/classes/ActiveRecord/Attributes/ClassMethods.html#method-i-attribute). Your class will inherit from `Possibility`, which is aptly-named.
 
 ```ruby
 class ExampleModel < Possibility
@@ -116,6 +116,8 @@ Once the state of your attributes is valid, you can pass the `attributes` from y
 You can experiment with [Beast Mode StimulusReflex](https://beastmode.leastbad.com/), a live demonstration of using All Futures to drill down into a tabular dataset, [**right now**](https://beastmode.leastbad.com/). 👈
 
 The Beast Mode [codebase](https://github.com/leastbad/beast_mode) [![GitHub stars](https://img.shields.io/github/stars/leastbad/beast_mode?style=social)](https://github.com/leastbad/beast_mode) [![GitHub forks](https://img.shields.io/github/forks/leastbad/beast_mode?style=social)](https://github.com/leastbad/beast_mode) is set up as a template repo which I recommend that you clone and experiment with.
+
+The two key files are the [Filter](https://github.com/leastbad/beast_mode/blob/master/app/filters/customer_filter.rb) and the [Reflex](https://github.com/leastbad/beast_mode/blob/master/app/reflexes/customers_reflex.rb). You can read the tutorial post behind this example on my blog [here](https://leastbad.com/beast-mode/).
 
 Assuming you're running Ruby 2.7.3, Postgres and have Redis running on your system, you can just run `bin/setup` to install it, including migrations and the DB seed file.
 
