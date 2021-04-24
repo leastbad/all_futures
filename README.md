@@ -50,7 +50,7 @@ Then create an instance and assign it to an instance variable in the controller 
 ```ruby
 class ExampleController < ApplicationController
   def index
-    @af= ExampleModel.new
+    @af = ExampleModel.new
   end
 end
 ```
