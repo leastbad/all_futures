@@ -2,6 +2,8 @@
 
 The [all\_futures](https://github.com/leastbad/all_futures) gem offers Rails developers a way to **gather attributes** on an unsaved model **across multiple requests**. It's perfect for [StimulusReflex](https://docs.stimulusreflex.com/) users that are building faceted search interfaces, as well as [Optimism](https://optimism.leastbad.com/) users looking to implement real-time, per-attribute validation schemes.
 
+Try a demo, here: 👉 [Beast Mode StimulusReflex](https://beastmode.leastbad.com/) 👈
+
 [![GitHub stars](https://img.shields.io/github/stars/leastbad/all_futures?style=social)](https://github.com/leastbad/all_futures) [![GitHub forks](https://img.shields.io/github/forks/leastbad/all_futures?style=social)](https://github.com/leastbad/all_futures) [![Twitter follow](https://img.shields.io/twitter/follow/theleastbad?style=social)](https://twitter.com/theleastbad) [![Discord](https://img.shields.io/discord/681373845323513862)](https://discord.gg/GnweR3)
 
 ## Why use All Futures?
