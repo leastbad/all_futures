@@ -29,7 +29,7 @@ end
 ```
 {% endcode %}
 
-The above code is taken from the [Beast Mode repo](https://github.com/leastbad/beast_mode), and is used to hold the values required to create a faceted search UI for a tabular dataset.
+The above code is an example of using All Futures to implement an exclusion filter. It's taken from the [Beast Mode repo](https://github.com/leastbad/beast_mode), and is used to hold the values required to create a faceted search UI for a tabular dataset.
 
 When working with tabular data, there are typically three concerns: 
 
@@ -37,9 +37,15 @@ When working with tabular data, there are typically three concerns:
 2. Attributes used to track the current page and number of items per page
 3. Attributes used to sort the filtered results in a specific direction \(ASC vs DESC\)
 
-The logic of the above is not intended to describe the data so much as describe the infinite ways users might want to slice and dice it, moving from all possible results to the specific outcome that they're looking for.
+The logic of the above is not intended to describe the data - that's the model's job. Instead, a filter describe the ways a user might want to interrogate it. They start with all possible results and move towards the specific outcome that they're looking for.
 
 For example, the `lawyers` attribute is used to reduce the results to only rows where the name of the employer has the string `and` in it.
+
+{% hint style="success" %}
+When designing faceted search UIs, it's important that you handle impossible states so that there are no combinations of filters which could produce invalid combinations or even errors.
+
+For example, it's recommended that you configure Pagy so that a user viewing page 10 is automatically taken to page 5 if the user adjust the number of records per-page from 10 to 20. Set `Pagy::VARS[:overflow] = :last_page` in your `pagy.rb` initializer.
+{% endhint %}
 
 While this application didn't require any attribute validation, we did define a `scope` method. It returns an `ActiveRecord::Relation` object which can be used as-is to perform the search, or additional scope clauses can be added to suit the needs of your application.
 
