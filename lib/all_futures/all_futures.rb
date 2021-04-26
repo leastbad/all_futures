@@ -1,4 +1,4 @@
-class Possibility < ActiveEntity::Base
+class AllFutures < ActiveEntity::Base
   attr_accessor :id
 
   def initialize(attributes={})
