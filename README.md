@@ -31,8 +31,7 @@ Yes, All Futures is for **you**.
 * A natural fit with [StimulusReflex](https://docs.stimulusreflex.com/) and [Stimulus](https://stimulus.hotwire.dev/)
 * No reliance on sessions, so it works across servers
 * Easy to learn, quick to implement
-* Supports model attributes with defaults, arrays and dirty checking
-* Model validations and errors
+* Supports model attributes, validations and errors
 * No need to mess around with temporary records
 
 ## How does All Futures work?
