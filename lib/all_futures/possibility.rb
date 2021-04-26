@@ -16,6 +16,7 @@ class Possibility < ActiveEntity::Base
 
   def save
     Kredis.json("#{self.class.name}:#{@id}").value = self.attributes.to_json
+    changes_applied
   end
 
   def self.find(id)
