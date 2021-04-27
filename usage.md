@@ -2,11 +2,13 @@
 
 Working with All Futures is very similar to working with a Rails model class. You can put your classes into `app/models`, or you might want to create a new folder in your `app` hierarchy to hold multiple classes, depending on your project needs.
 
-Classes inherit from `Possibility`, because I that's what I decided on:
+## Planning your future
+
+Classes inherit from `AllFutures`:
 
 {% code title="app/filters/customer\_filter.rb" %}
 ```ruby
-class CustomerFilter < Possibility
+class CustomerFilter < AllFutures
   attribute :search, :string
   attribute :state, :string
   attribute :lawyers, :boolean, default: false
@@ -31,7 +33,7 @@ end
 
 The above code is an example of using All Futures to implement an exclusion filter. It's taken from the [Beast Mode repo](https://github.com/leastbad/beast_mode), and is used to hold the values required to create a faceted search UI for a tabular dataset.
 
-When working with tabular data, there are typically three concerns: 
+When working with tabular data, there are typically three concerns:
 
 1. Attributes used to exclude and filter data from the total pool of possible values
 2. Attributes used to track the current page and number of items per page
@@ -48,4 +50,6 @@ For example, it's recommended that you configure Pagy so that a user viewing pag
 {% endhint %}
 
 While this application didn't require any attribute validation, we did define a `scope` method. It returns an `ActiveRecord::Relation` object which can be used as-is to perform the search, or additional scope clauses can be added to suit the needs of your application.
+
+As you can see in the code above, the actual business logic required to use the attributes stored with All Futures is fully contained in the model as a set of scopes. This `scope` method simply connects the dots to provide access to a relation for _this_ search.
 
