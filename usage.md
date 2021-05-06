@@ -54,7 +54,7 @@ For example, it's recommended that you configure Pagy so that a user viewing pag
 
 ### Providing a scope
 
-Since this example doesn't require any attribute validation, we complete the Filter by defining a `scope` method to return an `ActiveRecord::Relation` object. You can pass this relation directly into Pagy to perform the search, or additional scope clauses can be added to suit the needs of your application.
+Since this example doesn't require any attribute validation, we complete the Filter by defining a `scope` method to return an `ActiveRecord::Relation` object. You can pass this relation directly into [Pagy](https://github.com/ddnexus/pagy) to perform the search, or additional scope clauses can be added to suit the needs of your application.
 
 ```ruby
 class CustomerFilter < AllFutures
@@ -74,4 +74,14 @@ end
 ```
 
 The business logic required to filter the data is fully contained in the model as a set of scopes. This `CustomerFilter#scope` method simply connects the dots to provide access to a relation for _this_ filter instance.
+
+### Draw the rest of the owl
+
+Going through building the rest of a faceted search is beyond the scope of this document, but you are encouraged to clone and explore the Beast Mode [codebase](https://github.com/leastbad/beast_mode) and/or follow along with the [tutorial blog post](https://leastbad.com/beast-mode).
+
+{% hint style="info" %}
+There will soon be further guides suggesting strategies for real-time field validation and UI state persistence.
+
+What other scenarios would you like to see documented? [Let me know](https://discord.gg/stimulus-reflex) on Discord.
+{% endhint %}
 
