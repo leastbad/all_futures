@@ -1,6 +1,8 @@
 # All Futures
 
-The [all\_futures](https://github.com/leastbad/all_futures) gem offers Rails developers a way to **gather attributes** on an unsaved model **across multiple requests**. It's perfect for [StimulusReflex](https://docs.stimulusreflex.com/) users that are building faceted search interfaces, as well as [Optimism](https://optimism.leastbad.com/) users looking to implement real-time, per-attribute validation schemes.
+The [all\_futures](https://github.com/leastbad/all_futures) gem offers Rails developers a way to **gather attributes** on an unsaved model **across multiple requests**.
+
+It's perfect for [StimulusReflex](https://docs.stimulusreflex.com/) users that are building faceted search interfaces, real-time input validation and persisting the display state of low-stakes UI elements.
 
 Try a demo, here: 👉 [Beast Mode StimulusReflex](https://beastmode.leastbad.com/) 👈
 
@@ -31,7 +33,8 @@ Yes, All Futures is for **you**.
 * A natural fit with [StimulusReflex](https://docs.stimulusreflex.com/) and [Stimulus](https://stimulus.hotwire.dev/)
 * No reliance on sessions, so it works across servers
 * Easy to learn, quick to implement
-* Supports model attributes, validations and errors
+* Supports model attributes with defaults, arrays and dirty checking
+* Model validations and errors
 * No need to mess around with temporary records
 
 ## How does All Futures work?
@@ -50,7 +53,7 @@ Then create an instance and assign it to an instance variable in the controller 
 ```ruby
 class ExampleController < ApplicationController
   def index
-    @af = ExampleModel.new
+    @filter = ExampleModel.new
   end
 end
 ```
@@ -58,8 +61,8 @@ end
 Emit the instance id as a data attribute on every element which can update your model:
 
 ```text
-Name: <input type="text" data-af="<%= @af.id %>" data-reflex="input->Example#name" /><br/>
-Age: <input type="text" data-af="<%= @af.id %>" data-reflex="input->Example#age" placeholder="<%= @id.age %>" />
+Name: <input type="text" data-filter="<%= @filter.id %>" data-reflex="input->Example#name" /><br/>
+Age: <input type="text" data-filter="<%= @filter.id %>" data-reflex="input->Example#age" placeholder="<%= @filter.age %>" />
 ```
 
 Since all attributes are gathered and sent to the server during a Reflex operation, it's easy to retrieve the instance id from the Reflex element accessor and use it to call up the correct All Futures object and make changes to it:
@@ -67,12 +70,12 @@ Since all attributes are gathered and sent to the server during a Reflex operati
 ```ruby
 class ExampleReflex < ApplicationReflex
   def name
-    model = ExampleModel.find(element.dataset.af)
+    model = ExampleModel.find(element.dataset.filter)
     model[:name] = element.value
   end
 
   def age
-    model = ExampleModel.find(element.dataset.af)
+    model = ExampleModel.find(element.dataset.filter)
     model[:age] = element.value
   end
 end
@@ -115,9 +118,9 @@ Once the state of your attributes is valid, you can pass the `attributes` from y
 
 You can experiment with [Beast Mode StimulusReflex](https://beastmode.leastbad.com/), a live demonstration of using All Futures to drill down into a tabular dataset, [**right now**](https://beastmode.leastbad.com/). 👈
 
-The Beast Mode [codebase](https://github.com/leastbad/beast_mode) [![GitHub stars](https://img.shields.io/github/stars/leastbad/beast_mode?style=social)](https://github.com/leastbad/beast_mode) [![GitHub forks](https://img.shields.io/github/forks/leastbad/beast_mode?style=social)](https://github.com/leastbad/beast_mode) is set up as a template repo which I recommend that you clone and experiment with.
+The Beast Mode [codebase](https://github.com/leastbad/beast_mode) [![GitHub stars](https://img.shields.io/github/stars/leastbad/beast_mode?style=social)](https://github.com/leastbad/beast_mode) [![GitHub forks](https://img.shields.io/github/forks/leastbad/beast_mode?style=social)](https://github.com/leastbad/beast_mode) is set up as a **template repo** which I recommend that you clone and experiment with.
 
-The two key files are the [Filter](https://github.com/leastbad/beast_mode/blob/master/app/filters/customer_filter.rb) and the [Reflex](https://github.com/leastbad/beast_mode/blob/master/app/reflexes/customers_reflex.rb). You can read the tutorial post behind this example on my blog [here](https://leastbad.com/beast-mode/).
+The three key files are the [Filter](https://github.com/leastbad/beast_mode/blob/master/app/filters/customer_filter.rb), the [Reflex](https://github.com/leastbad/beast_mode/blob/master/app/reflexes/customers_reflex.rb) and the [Model](https://github.com/leastbad/beast_mode/blob/master/app/models/customer.rb). You can read the tutorial post behind this example on my blog [here](https://leastbad.com/beast-mode/).
 
 Assuming you're running Ruby 2.7.3, Postgres and have Redis running on your system, you can just run `bin/setup` to install it, including migrations and the DB seed file.
 
