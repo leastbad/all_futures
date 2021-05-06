@@ -44,12 +44,16 @@ The `CustomerFilter` doesn't describe the data - that's the model's job. Instead
 
 ![Hole In The Wall](.gitbook/assets/hole.jpg)
 
-For example, the `lawyers` attribute is used to reduce the results to only rows where the name of the employer has the string `and` in it. `threshold` is used to alternate between loose and strict text matching. You can [see this for yourself](https://beastmode.leastbad.com/) if you search for "ste"; you'll see 7 results, unless you turn on _Uptight_ _mode_, which reduces the results to 3.
+For example, the `lawyers` attribute is used to reduce the results to only rows where the name of the employer has the string `and` in it. `threshold` is used to alternate between loose and strict text matching.
+
+{% hint style="info" %}
+You can [see this for yourself](https://beastmode.leastbad.com/) if you search for "ste". Initially, you'll see 7 matches. If you turn on _Uptight_ _mode_, it reduces the results to 3 matches.
+{% endhint %}
 
 {% hint style="success" %}
 When designing faceted search UIs, it's important that you handle impossible states so that there are no combinations of filters which could produce invalid combinations or even errors.
 
-For example, it's recommended that you configure Pagy so that a user viewing page 10 is automatically taken to page 5 if the user adjust the number of records per-page from 10 to 20. Set `Pagy::VARS[:overflow] = :last_page` in your `pagy.rb` initializer.
+For example, it's recommended that you configure [Pagy](https://github.com/ddnexus/pagy) so that a user viewing page 10 is automatically taken to page 5 if the user adjust the number of records per-page from 10 to 20. Set `Pagy::VARS[:overflow] = :last_page` in your `pagy.rb` initializer.
 {% endhint %}
 
 ### Providing a scope
