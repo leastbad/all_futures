@@ -17,12 +17,11 @@ Gem::Specification.new do |gem|
 
   gem.files = Dir["lib/**/*.rb", "bin/*", "[A-Z]*"]
 
-  gem.add_dependency "kredis", "~> 0.2"
+  gem.add_dependency "kredis", "~> 0.4"
   gem.add_dependency "activeentity", "~> 6.1"
 
   gem.add_development_dependency "magic_frozen_string_literal", "~> 1.2.0"
-  gem.add_development_dependency "pry", "~> 0.12"
-  gem.add_development_dependency "pry-nav", "~> 0.3"
+  gem.add_development_dependency "ruby_jard", "~> 0.3"
   gem.add_development_dependency "rake", "~> 13.0", ">= 13.0.3"
   gem.add_development_dependency "standardrb", "~> 1.0"
 end

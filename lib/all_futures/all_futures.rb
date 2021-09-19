@@ -15,7 +15,7 @@ class AllFutures < ActiveEntity::Base
   end
 
   def save
-    Kredis.json("#{self.class.name}:#{@id}").value = self.attributes.to_json
+    Kredis.json("#{self.class.name}:#{@id}").value = self.attributes
     changes_applied
   end
 
