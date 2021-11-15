@@ -1,6 +1,17 @@
 class AllFutures < ActiveEntity::Base
   attr_accessor :id, :redis_key, :destroyed, :new_record, :previously_new_record
 
+  def self.create
+    new.tap { |record| record.save }
+  end
+
+  def self.find(id)
+    raise ActiveRecord::RecordNotFound.new("Couldn't find #{name} without an ID") unless id
+    json = Kredis.json("#{name}:#{id}").value
+    raise ActiveRecord::RecordNotFound.new("Couldn't find #{name} with ID #{id}") unless json
+    new json.merge(id: id)
+  end
+
   def initialize(attributes={})
     super
     @id ||= SecureRandom.uuid
@@ -23,6 +34,19 @@ class AllFutures < ActiveEntity::Base
     Kredis.redis.del @redis_key if persisted?
     @destroyed = true
     self
+  end
+
+  def reload
+    json = Kredis.json("#{self.class.name}:#{@id}").value
+    attributes.each do |key, value|
+      self[key] = json[key] if json[key] != value
+    end
+    clear_changes_information
+    self
+  end
+
+  def rollback!
+    restore_attributes
   end
 
   def destroyed?
@@ -59,29 +83,5 @@ class AllFutures < ActiveEntity::Base
 
   def saved_changes?
     saved_changes.any?
-  end
-
-  def reload!
-    json = Kredis.json("#{self.class.name}:#{@id}").value
-    attributes.each do |key, value|
-      self[key] = json[key] if json[key] != value
-    end
-    clear_changes_information
-    self
-  end
-
-  def rollback!
-    restore_attributes
-  end
-
-  def self.create
-    new.tap { |record| record.save }
-  end
-
-  def self.find(id)
-    raise ActiveRecord::RecordNotFound.new("Couldn't find #{name} without an ID") unless id
-    json = Kredis.json("#{name}:#{id}").value
-    raise ActiveRecord::RecordNotFound.new("Couldn't find #{name} with ID #{id}") unless json
-    new json.merge(id: id)
   end
 end
