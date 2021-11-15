@@ -1,43 +1,77 @@
 class AllFutures < ActiveEntity::Base
-  attr_accessor :id, :_redis_key, :_destroyed, :_persisted
+  attr_accessor :id, :redis_key, :destroyed, :new_record, :previously_new_record
 
   def initialize(attributes={})
     super
     @id ||= SecureRandom.uuid
-    @_redis_key = "#{self.class.name}:#{@id}"
-    @_destroyed = false
-    @_persisted = Kredis.redis.exists @_redis_key
-  end
-
-  def []=(attr_name, value)
-    super
-    save
+    @redis_key = "#{self.class.name}:#{@id}"
+    @destroyed = false
+    @new_record = !Kredis.redis.exists?(@redis_key)
+    @previously_new_record = false
   end
 
   def save
-    raise FrozenError.new("can't modify frozen attributes") if @_destroyed
-    @_persisted = true
-    Kredis.json(@_redis_key).value = self.attributes
+    raise FrozenError.new("can't modify frozen attributes") if @destroyed
+    @previously_new_record = true if @new_record
+    @new_record = false
+    Kredis.json(@redis_key).value = self.attributes
     changes_applied
     true
   end
 
   def destroy
-    @_destroyed = true
-    Kredis.redis.del @_redis_key if persisted?
+    Kredis.redis.del @redis_key if persisted?
+    @destroyed = true
     self
   end
 
   def destroyed?
-    @_destroyed
+    @destroyed
   end
 
   def new_record?
-    !persisted?
+    @new_record
   end
 
   def persisted?
-    @_persisted
+    !(@new_record || @destroyed)
+  end
+
+  def previously_new_record?
+    @previously_new_record
+  end
+
+  def changed_attribute_names
+    changed_attributes.keys
+  end
+
+  def has_changes_to_save?
+    changes.any?
+  end
+
+  def saved_change_to_attribute?(attr)
+    attribute_was(attr) != attribute_previously_was(attr)
+  end
+
+  def saved_changes
+    attributes.select { |attr| saved_change_to_attribute? attr }
+  end
+
+  def saved_changes?
+    saved_changes.any?
+  end
+
+  def reload!
+    json = Kredis.json("#{self.class.name}:#{@id}").value
+    attributes.each do |key, value|
+      self[key] = json[key] if json[key] != value
+    end
+    clear_changes_information
+    self
+  end
+
+  def rollback!
+    restore_attributes
   end
 
   def self.create
