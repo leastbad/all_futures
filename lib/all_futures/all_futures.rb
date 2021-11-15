@@ -1,8 +1,8 @@
 class AllFutures < ActiveEntity::Base
   attr_accessor :id, :redis_key, :destroyed, :new_record, :previously_new_record
 
-  def self.create
-    new.tap { |record| record.save }
+  def self.create(attributes = {})
+    new(attributes).tap { |record| record.save }
   end
 
   def self.find(id)
@@ -12,20 +12,25 @@ class AllFutures < ActiveEntity::Base
     new json.merge(id: id)
   end
 
-  def initialize(attributes={})
-    super
-    @id ||= SecureRandom.uuid
-    @redis_key = "#{self.class.name}:#{@id}"
-    @destroyed = false
-    @new_record = !Kredis.redis.exists?(@redis_key)
-    @previously_new_record = false
+  def initialize(attributes = {})
+    super do
+      @id ||= SecureRandom.uuid
+      @redis_key = "#{self.class.name}:#{@id}"
+      @destroyed = false
+      @new_record = !Kredis.redis.exists?(@redis_key)
+      @previously_new_record = false
+      @attributes.keys.each do |attr|
+        define_singleton_method("saved_change_to_#{attr}?") { saved_change_to_attribute?(attr) }
+        define_singleton_method("saved_change_to_#{attr}") { saved_change_to_attribute?(attr) ? [attribute_previously_was(attr), attribute_was(attr)] : nil }
+      end
+    end
   end
 
   def save
     raise FrozenError.new("can't modify frozen attributes") if @destroyed
     @previously_new_record = true if @new_record
     @new_record = false
-    Kredis.json(@redis_key).value = self.attributes
+    Kredis.json(@redis_key).value = attributes
     changes_applied
     true
   end
@@ -43,10 +48,6 @@ class AllFutures < ActiveEntity::Base
     end
     clear_changes_information
     self
-  end
-
-  def rollback!
-    restore_attributes
   end
 
   def destroyed?
@@ -74,7 +75,7 @@ class AllFutures < ActiveEntity::Base
   end
 
   def saved_change_to_attribute?(attr)
-    attribute_was(attr) != attribute_previously_was(attr)
+    attribute_previously_was(attr) != attribute_was(attr)
   end
 
   def saved_changes
