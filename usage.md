@@ -8,7 +8,7 @@ Define a class that inherits from `AllFutures`, in a location that makes sense f
 
 Your first task is to define attributes representing the data structure you intend to persist. `attribute` supports all of the same data types you could use in a migration:
 
-{% code title="app/filters/customer\_filter.rb" %}
+{% code title="app/filters/customer_filter.rb" %}
 ```ruby
 class CustomerFilter < AllFutures
   # Facets
@@ -30,7 +30,7 @@ end
 ```
 {% endcode %}
 
-The above code is an example of using All Futures to implement an exclusion filter. It's taken from the [Beast Mode repo](https://github.com/leastbad/beast_mode), and is used to hold the values required to create a faceted search UI for a tabular dataset.
+The above code is an example of using All Futures to implement an exclusion filter. It's taken from the [Beast Mode repo](https://github.com/leastbad/beast\_mode), and is used to hold the values required to create a faceted search UI for a tabular dataset.
 
 ### Facets, Pagination and Sorting
 
@@ -38,7 +38,7 @@ When working with tabular data, there are typically three concerns:
 
 1. **Facets**: attributes used to exclude and filter data from the total pool of possible values
 2. **Pagination**: attributes used to track the current page and number of items per page
-3. **Sorting**: attributes used to sort the filtered results in a specific direction \(ASC vs DESC\)
+3. **Sorting**: attributes used to sort the filtered results in a specific direction (ASC vs DESC)
 
 The `CustomerFilter` doesn't describe the data - that's the model's job. Instead, facets describe the ways a user might exclude rows. Facets are composable, meaning that you can add them together to remove more data. Ultimately, the filter that is applied is the sum total of all active facets.
 
@@ -47,7 +47,7 @@ The `CustomerFilter` doesn't describe the data - that's the model's job. Instead
 For example, the `lawyers` attribute is used to reduce the results to only rows where the name of the employer has the string `and` in it. `threshold` is used to alternate between loose and strict text matching.
 
 {% hint style="info" %}
-You can [see this for yourself](https://beastmode.leastbad.com/) if you search for "ste". Initially, you'll see 7 matches. If you turn on _Uptight_ _mode_, it reduces the results to 3 matches.
+You can [see this for yourself](https://beastmode.leastbad.com) if you search for "ste". Initially, you'll see 7 matches. If you turn on _Uptight_ _mode_, it reduces the results to 3 matches.
 {% endhint %}
 
 {% hint style="success" %}
@@ -81,11 +81,10 @@ The business logic required to filter the data is fully contained in the model a
 
 ### Draw the rest of the owl
 
-Going through building the rest of a faceted search is beyond the scope of this document, but you are encouraged to clone and explore the Beast Mode [codebase](https://github.com/leastbad/beast_mode) and/or follow along with the [tutorial blog post](https://leastbad.com/beast-mode).
+Going through building the rest of a faceted search is beyond the scope of this document, but you are encouraged to clone and explore the Beast Mode [codebase](https://github.com/leastbad/beast\_mode) and/or follow along with the [tutorial blog post](https://leastbad.com/beast-mode).
 
 {% hint style="info" %}
 There will soon be further guides suggesting strategies for real-time field validation and UI state persistence.
 
 What other scenarios would you like to see documented? [Let me know](https://discord.gg/stimulus-reflex) on Discord.
 {% endhint %}
-
