@@ -35,6 +35,14 @@ class AllFutures < ActiveEntity::Base
     true
   end
 
+  def update(attrs = {})
+    attrs.transform_keys!(&:to_s).each_key do |key|
+      self[key] = attrs[key] if self[key] != attrs[key]
+    end
+    save if changes.any?
+    true
+  end
+
   def destroy
     Kredis.redis.del @redis_key if persisted?
     @destroyed = true
