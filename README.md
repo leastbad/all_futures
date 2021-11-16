@@ -1,12 +1,12 @@
 # All Futures
 
-The [all\_futures](https://github.com/leastbad/all_futures) gem offers Rails developers a way to **gather attributes** on an unsaved model **across multiple requests**.
+The [all\_futures](https://github.com/leastbad/all\_futures) gem offers Rails developers a way to **gather attributes** on an unsaved model **across multiple requests**.
 
-It's perfect for [StimulusReflex](https://docs.stimulusreflex.com/) users that are building faceted search interfaces, real-time input validation and persisting the display state of low-stakes UI elements.
+It's perfect for [StimulusReflex](https://docs.stimulusreflex.com) users that are building faceted search interfaces, real-time input validation and persisting the display state of low-stakes UI elements.
 
-Try a demo, here: 👉 [Beast Mode StimulusReflex](https://beastmode.leastbad.com/) 👈
+Try a demo, here: 👉 [Beast Mode StimulusReflex](https://beastmode.leastbad.com) 👈
 
-[![GitHub stars](https://img.shields.io/github/stars/leastbad/all_futures?style=social)](https://github.com/leastbad/all_futures) [![GitHub forks](https://img.shields.io/github/forks/leastbad/all_futures?style=social)](https://github.com/leastbad/all_futures) [![Twitter follow](https://img.shields.io/twitter/follow/theleastbad?style=social)](https://twitter.com/theleastbad) [![Discord](https://img.shields.io/discord/681373845323513862)](https://discord.gg/GnweR3)
+[![GitHub stars](https://img.shields.io/github/stars/leastbad/all\_futures?style=social)](https://github.com/leastbad/all\_futures) [![GitHub forks](https://img.shields.io/github/forks/leastbad/all\_futures?style=social)](https://github.com/leastbad/all\_futures) [![Twitter follow](https://img.shields.io/twitter/follow/theleastbad?style=social)](https://twitter.com/theleastbad) [![Discord](https://img.shields.io/discord/681373845323513862)](https://discord.gg/GnweR3)
 
 ## Why use All Futures?
 
@@ -30,7 +30,7 @@ Yes, All Futures is for **you**.
 
 ## Key features and advantages
 
-* A natural fit with [StimulusReflex](https://docs.stimulusreflex.com/) and [Stimulus](https://stimulus.hotwire.dev/)
+* A natural fit with [StimulusReflex](https://docs.stimulusreflex.com) and [Stimulus](https://stimulus.hotwire.dev)
 * No reliance on sessions, so it works across servers
 * Easy to learn, quick to implement
 * Supports model attributes with defaults, arrays and dirty checking
@@ -60,7 +60,7 @@ end
 
 Emit the instance id as a data attribute on every element which can update your model:
 
-```text
+```
 Name: <input type="text" data-filter="<%= @filter.id %>" data-reflex="input->Example#name" /><br/>
 Age: <input type="text" data-filter="<%= @filter.id %>" data-reflex="input->Example#age" placeholder="<%= @filter.age %>" />
 ```
@@ -116,13 +116,14 @@ Once the state of your attributes is valid, you can pass the `attributes` from y
 
 ## Try it now
 
-You can experiment with [Beast Mode StimulusReflex](https://beastmode.leastbad.com/), a live demonstration of using All Futures to drill down into a tabular dataset, [**right now**](https://beastmode.leastbad.com/). 👈
+You can experiment with [Beast Mode StimulusReflex](https://beastmode.leastbad.com), a live demonstration of using All Futures to drill down into a tabular dataset, [**right now**](https://beastmode.leastbad.com). 👈
 
-The Beast Mode [codebase](https://github.com/leastbad/beast_mode) [![GitHub stars](https://img.shields.io/github/stars/leastbad/beast_mode?style=social)](https://github.com/leastbad/beast_mode) [![GitHub forks](https://img.shields.io/github/forks/leastbad/beast_mode?style=social)](https://github.com/leastbad/beast_mode) is set up as a **template repo** which I recommend that you clone and experiment with.
+The Beast Mode [codebase](https://github.com/leastbad/beast\_mode) [![GitHub stars](https://img.shields.io/github/stars/leastbad/beast\_mode?style=social)](https://github.com/leastbad/beast\_mode) [![GitHub forks](https://img.shields.io/github/forks/leastbad/beast\_mode?style=social)](https://github.com/leastbad/beast\_mode) is set up as a **template repo** which I recommend that you clone and experiment with.
 
-The three key files are the [Filter](https://github.com/leastbad/beast_mode/blob/master/app/filters/customer_filter.rb), the [Reflex](https://github.com/leastbad/beast_mode/blob/master/app/reflexes/customers_reflex.rb) and the [Model](https://github.com/leastbad/beast_mode/blob/master/app/models/customer.rb). You can read the tutorial post behind this example on my blog [here](https://leastbad.com/beast-mode/).
+The three key files are the [Filter](https://github.com/leastbad/beast\_mode/blob/master/app/filters/customer\_filter.rb), the [Reflex](https://github.com/leastbad/beast\_mode/blob/master/app/reflexes/customers\_reflex.rb) and the [Model](https://github.com/leastbad/beast\_mode/blob/master/app/models/customer.rb). You can read the tutorial post behind this example on my blog [here](https://leastbad.com/beast-mode/).
 
 Assuming you're running Ruby 2.7.3, Postgres and have Redis running on your system, you can just run `bin/setup` to install it, including migrations and the DB seed file.
 
-{% embed url="https://www.youtube.com/watch?v=Fbo21aWFbhQ" caption="Did they meet at the gym?" %}
-
+{% embed url="https://www.youtube.com/watch?v=Fbo21aWFbhQ" %}
+Did they meet at the gym?
+{% endembed %}
