@@ -1,3 +1,5 @@
 # frozen_string_literal: true
 
-VERSION = "1.0.3"
+module AllFutures
+	VERSION = "1.0.3"
+end
