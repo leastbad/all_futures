@@ -5,7 +5,7 @@ require "active_support/callbacks"
 module Callbacks
   extend ActiveSupport::Concern
 
-  CALLBACKS = [:around_save, :before_save, :after_save, :around_update, :before_update, :after_update, :around_destroy, :before_destroy, :after_destroy, :after_find]
+  CALLBACKS = [:before_save, :after_save, :before_update, :after_update, :before_destroy, :after_destroy, :after_find]
 
   def self.prepended(base)
     base.include(ActiveSupport::Callbacks)
