@@ -42,7 +42,7 @@ Yes, All Futures is for **you**.
 First, set up an All Futures class that defines some [attributes](https://api.rubyonrails.org/classes/ActiveRecord/Attributes/ClassMethods.html#method-i-attribute). Your class will inherit from `AllFutures`, which is aptly-named:
 
 ```ruby
-class ExampleModel < AllFutures
+class ExampleModel < AllFutures::Base
   attribute :name, :string
   attribute :age, :integer, default: 21
 end
@@ -96,7 +96,7 @@ All Futures class attributes are persisted in Redis via the excellent [Kredis](h
 All Futures is based on [Active Entity](https://github.com/jasl/activeentity). It is similar to using [ActiveModel::Model](https://api.rubyonrails.org/classes/ActiveModel/Model.html), except that it has full support for [Attributes](https://api.rubyonrails.org/classes/ActiveRecord/Attributes/ClassMethods.html#method-i-attribute), including arrays and nested attributes. All Futures classes behave like ActiveModel classes, so you can inspect `valid?` and the `errors` accessor.
 
 ```ruby
-class ExampleModel < AllFutures
+class ExampleModel < AllFutures::Base
   attribute :name, :string
   validates :name, presence: true
 end
