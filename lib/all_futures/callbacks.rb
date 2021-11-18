@@ -5,6 +5,8 @@ require "active_support/callbacks"
 module Callbacks
   extend ActiveSupport::Concern
 
+  CALLBACKS = [:around_save, :before_save, :after_save, :around_update, :before_update, :after_update, :around_destroy, :before_destroy, :after_destroy, :after_find]
+
   def self.prepended(base)
     base.include(ActiveSupport::Callbacks)
 
@@ -29,44 +31,15 @@ module Callbacks
   alias_method :find, :save
 
   module ClassMethods
-    def around_save(*filters, &blk)
-      set_callback(:save, :around, *filters, &blk)
+    def method_missing(name, *filters, &blk)
+      if CALLBACKS.include? name
+        callback = name.to_s.split("_")
+        set_callback(callback[1].to_sym, callback[0].to_sym, *filters, &blk)
+      end
     end
 
-    def before_save(*filters, &blk)
-      set_callback(:save, :before, *filters, &blk)
-    end
-
-    def after_save(*filters, &blk)
-      set_callback(:save, :after, *filters, &blk)
-    end
-
-    def around_update(*filters, &blk)
-      set_callback(:update, :around, *filters, &blk)
-    end
-
-    def before_update(*filters, &blk)
-      set_callback(:update, :before, *filters, &blk)
-    end
-
-    def after_update(*filters, &blk)
-      set_callback(:update, :after, *filters, &blk)
-    end
-
-    def around_destroy(*filters, &blk)
-      set_callback(:destroy, :around, *filters, &blk)
-    end
-
-    def before_destroy(*filters, &blk)
-      set_callback(:destroy, :before, *filters, &blk)
-    end
-
-    def after_destroy(*filters, &blk)
-      set_callback(:destroy, :after, *filters, &blk)
-    end
-
-    def after_find(*filters, &blk)
-      set_callback(:find, :after, *filters, &blk)
+    def respond_to_missing?(name, include_all)
+      CALLBACKS.include? name
     end
   end
 end
