@@ -6,12 +6,12 @@ module AllFutures
   module Callbacks
     extend ActiveSupport::Concern
   
-    CALLBACKS = [:before_save, :after_save, :before_update, :after_update, :before_destroy, :after_destroy, :after_find]
+    CALLBACKS = [:before_save, :after_save, :before_update, :after_update, :before_destroy, :after_destroy]
   
     def self.prepended(base)
       base.include(ActiveSupport::Callbacks)
   
-      base.define_callbacks(:save, :update, :destroy, :find, skip_after_callbacks_if_terminated: true) unless base.respond_to?(:_perform_callbacks) && base._perform_callbacks.present?
+      base.define_callbacks(:save, :update, :destroy, skip_after_callbacks_if_terminated: true) unless base.respond_to?(:_perform_callbacks) && base._perform_callbacks.present?
   
       class << base
         prepend ClassMethods
