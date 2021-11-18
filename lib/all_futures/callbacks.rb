@@ -36,10 +36,11 @@ module Callbacks
         callback = name.to_s.split("_")
         set_callback(callback[1].to_sym, callback[0].to_sym, *filters, &blk)
       end
+      super
     end
 
     def respond_to_missing?(name, include_all)
-      CALLBACKS.include? name
+      CALLBACKS.include?(name) || super
     end
   end
 end
