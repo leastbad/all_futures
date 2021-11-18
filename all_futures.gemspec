@@ -5,7 +5,7 @@ require File.expand_path("../lib/all_futures/version", __FILE__)
 Gem::Specification.new do |gem|
   gem.name = "all_futures"
   gem.license = "MIT"
-  gem.version = VERSION
+  gem.version = AllFutures::VERSION
   gem.authors = ["leastbad"]
   gem.email = ["hello@leastbad.com"]
   gem.homepage = "https://allfutures.leastbad.com/"
