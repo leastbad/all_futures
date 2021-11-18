@@ -3,3 +3,4 @@
 require "active_entity/railtie"
 require "all_futures/version"
 require "all_futures/all_futures"
+require "all_futures/callbacks"

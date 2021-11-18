@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 class AllFutures < ActiveEntity::Base
+  include Callbacks
   attr_accessor :id, :redis_key, :destroyed, :new_record, :previously_new_record
 
   def self.create(attributes = {})
