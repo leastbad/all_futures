@@ -26,6 +26,9 @@ GEM
       activesupport (~> 6.0, < 7.0)
     activemodel (6.1.4.1)
       activesupport (= 6.1.4.1)
+    activerecord (6.1.4.1)
+      activemodel (= 6.1.4.1)
+      activesupport (= 6.1.4.1)
     activesupport (6.1.4.1)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
@@ -116,6 +119,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  activerecord (>= 4.0)
   all_futures!
   magic_frozen_string_literal (~> 1.2.0)
   railties (>= 4.0)

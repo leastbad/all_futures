@@ -20,6 +20,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency "kredis", "~> 0.4"
   gem.add_dependency "activeentity", "~> 6.1"
 
+  gem.add_development_dependency "activerecord", ">= 4.0"
   gem.add_development_dependency "magic_frozen_string_literal", "~> 1.2.0"
   gem.add_development_dependency "railties", ">= 4.0"
   gem.add_development_dependency "rake", "~> 13.0", ">= 13.0.3"
