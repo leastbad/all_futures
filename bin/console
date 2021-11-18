@@ -4,4 +4,8 @@ require "bundler/setup"
 require "all_futures"
 require "pry"
 
+# Configure Kredis to allow for testing without Redis in order to avoid exception: 
+# NoMethodError: undefined method `config_for' for nil:NilClass 
+Kredis.configurator = Class.new { def config_for(name) { db: "1" } end }.new
+
 Pry.start
