@@ -18,26 +18,36 @@ module AllFutures
       end
     end
   
-    def save(*args)
+    def save
+      perform_operation(:save)
+    end
+    
+    def destroy
+      perform_operation(:destroy)
+    end
+    
+    def update(attrs = {})
+      perform_operation(:update, attrs)
+    end
+    
+    def perform_operation(operation, *args)
       if respond_to?(:run_callbacks)
-        run_callbacks __callee__ do
-          super(*args)
+        run_callbacks operation do
+          method(operation).super_method.call(*args)
         end
       else
-        super(*args)
+        method(operation).super_method.call(*args)
       end
     end
-    alias_method :update, :save
-    alias_method :destroy, :save
-    alias_method :find, :save
   
     module ClassMethods
       def method_missing(name, *filters, &blk)
         if CALLBACKS.include? name
-          callback = name.to_s.split("_")
-          set_callback(callback[1].to_sym, callback[0].to_sym, *filters, &blk)
+          callback_context, method_name = name.to_s.split("_")
+          set_callback(method_name.to_sym, callback_context.to_sym, *filters, &blk)
+        else
+          super
         end
-        super
       end
   
       def respond_to_missing?(name, include_all)
