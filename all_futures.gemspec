@@ -21,7 +21,8 @@ Gem::Specification.new do |gem|
   gem.add_dependency "activeentity", "~> 6.1"
 
   gem.add_development_dependency "magic_frozen_string_literal", "~> 1.2.0"
-  gem.add_development_dependency "ruby_jard", "~> 0.3"
+  gem.add_development_dependency "railties", ">= 4.0"
   gem.add_development_dependency "rake", "~> 13.0", ">= 13.0.3"
+  gem.add_development_dependency "ruby_jard", "~> 0.3"
   gem.add_development_dependency "standardrb", "~> 1.0"
 end
