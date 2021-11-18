@@ -5,31 +5,31 @@ require "active_support/callbacks"
 module AllFutures
   module Callbacks
     extend ActiveSupport::Concern
-  
+
     CALLBACKS = [:before_save, :after_save, :before_update, :after_update, :before_destroy, :after_destroy]
-  
+
     def self.prepended(base)
       base.include(ActiveSupport::Callbacks)
-  
+
       base.define_callbacks(:save, :update, :destroy, skip_after_callbacks_if_terminated: true) unless base.respond_to?(:_perform_callbacks) && base._perform_callbacks.present?
-  
+
       class << base
         prepend ClassMethods
       end
     end
-  
+
     def save
       perform_operation(:save)
     end
-    
+
     def destroy
       perform_operation(:destroy)
     end
-    
+
     def update(attrs = {})
       perform_operation(:update, attrs)
     end
-    
+
     def perform_operation(operation, *args)
       if respond_to?(:run_callbacks)
         run_callbacks operation do
@@ -39,7 +39,7 @@ module AllFutures
         method(operation).super_method.call(*args)
       end
     end
-  
+
     module ClassMethods
       def method_missing(name, *filters, &blk)
         if CALLBACKS.include? name
@@ -49,7 +49,7 @@ module AllFutures
           super
         end
       end
-  
+
       def respond_to_missing?(name, include_all)
         CALLBACKS.include?(name) || super
       end
