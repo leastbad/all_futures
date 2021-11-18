@@ -3,7 +3,7 @@
 require "test_helper"
 
 describe AllFutures do
-	it "has a version number" do
-		refute_nil ::AllFutures::VERSION
-	end
+  it "has a version number" do
+    refute_nil ::AllFutures::VERSION
+  end
 end
