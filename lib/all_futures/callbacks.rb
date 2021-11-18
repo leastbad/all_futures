@@ -17,43 +17,16 @@ module Callbacks
 
   def save(*args)
     if respond_to?(:run_callbacks)
-      run_callbacks :save do
+      run_callbacks __callee__ do
         super(*args)
       end
     else
       super(*args)
     end
   end
-
-  def update(*args)
-    if respond_to?(:run_callbacks)
-      run_callbacks :update do
-        super(*args)
-      end
-    else
-      super(*args)
-    end
-  end
-
-  def destroy(*args)
-    if respond_to?(:run_callbacks)
-      run_callbacks :destroy do
-        super(*args)
-      end
-    else
-      super(*args)
-    end
-  end
-
-  def find(*args)
-    if respond_to?(:run_callbacks)
-      run_callbacks :find do
-        super(*args)
-      end
-    else
-      super(*args)
-    end
-  end
+  alias_method :update, :save
+  alias_method :destroy, :save
+  alias_method :find, :save
 
   module ClassMethods
     def around_save(*filters, &blk)
