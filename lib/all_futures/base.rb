@@ -3,6 +3,7 @@
 module AllFutures
   class Base < ActiveEntity::Base
     prepend ::AllFutures::Callbacks
+    include ActiveModel::Conversion
 
     def self.create(attributes = {})
       new(attributes).tap { |record| record.save }
