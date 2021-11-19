@@ -3,7 +3,6 @@
 module AllFutures
   class Base < ActiveEntity::Base
     prepend ::AllFutures::Callbacks
-    attr_accessor :id, :redis_key, :destroyed, :new_record, :previously_new_record
 
     def self.create(attributes = {})
       new(attributes).tap { |record| record.save }
@@ -60,6 +59,14 @@ module AllFutures
       end
       clear_changes_information
       self
+    end
+
+    def id
+      @new_record ? nil : @id
+    end
+
+    def id=(value)
+      @id = value if @new_record
     end
 
     def destroyed?
