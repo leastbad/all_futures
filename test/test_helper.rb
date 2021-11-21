@@ -9,4 +9,8 @@ require "minitest/spec"
 
 # Configure Kredis to allow for testing without Redis in order to avoid exception:
 # NoMethodError: undefined method `config_for' for nil:NilClass
-Kredis.configurator = Class.new { def config_for(name); {db: "1"}; end }.new
+Kredis.configurator = Class.new {
+  def config_for(name)
+    {db: "1"}
+  end
+}.new

@@ -66,6 +66,7 @@ describe AllFutures::Callbacks do
 
   it "basic before_update works" do
     class BeforeUpdateCallback < AllFutures::Base
+      attribute :foo, :boolean
       before_update :init_counter
 
       private
@@ -76,24 +77,27 @@ describe AllFutures::Callbacks do
     end
 
     future = BeforeUpdateCallback.new
-    future.update
+    future.update foo: true
     assert_equal 25, future.instance_variable_get("@count")
   end
 
   it "before_update with block works" do
     class BeforeUpdateBlockCallback < AllFutures::Base
+      attribute :foo, :boolean
+
       before_update do
         @count = 30
       end
     end
 
     future = BeforeUpdateBlockCallback.new
-    future.update
+    future.update foo: true
     assert_equal 30, future.instance_variable_get("@count")
   end
 
   it "basic after_update works" do
     class AfterUpdateCallback < AllFutures::Base
+      attribute :foo, :boolean
       after_update :init_counter
 
       private
@@ -104,19 +108,21 @@ describe AllFutures::Callbacks do
     end
 
     future = AfterUpdateCallback.new
-    future.update
+    future.update foo: true
     assert_equal 35, future.instance_variable_get("@count")
   end
 
   it "after_update with block works" do
     class AfterUpdateBlockCallback < AllFutures::Base
+      attribute :foo, :boolean
+
       after_update do
         @count = 40
       end
     end
 
     future = AfterUpdateBlockCallback.new
-    future.update
+    future.update foo: true
     assert_equal 40, future.instance_variable_get("@count")
   end
 

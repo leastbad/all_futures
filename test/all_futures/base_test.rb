@@ -5,6 +5,7 @@ require "test_helper"
 class ExampleModel < AllFutures::Base
   attribute :name, :string
   attribute :age, :integer, default: 21
+  @count = nil
 end
 
 describe AllFutures::Base do
