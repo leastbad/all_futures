@@ -45,7 +45,7 @@ module AllFutures
 
     def id=(value)
       raise FrozenError.new("can't modify id when persisted") unless new_record?
-      @id = value
+      @id = value.to_s
     end
   end
 end
