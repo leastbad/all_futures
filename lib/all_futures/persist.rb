@@ -30,9 +30,7 @@ module AllFutures
 
     def destroy
       _raise_readonly_record_error if readonly?
-      @_trigger_destroy_callback = persisted? ? _delete_record > 0 : true
-      @destroyed = true
-      freeze
+      delete
     end
 
     def destroy!
@@ -152,7 +150,6 @@ module AllFutures
 
     def _update_record
       _save_record
-      @_trigger_update_callback = true
       @previously_new_record = false
       true
     end

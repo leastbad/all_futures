@@ -31,7 +31,7 @@ describe AllFutures::Base do
     example = ConversionModel.new(id: 1)
     example.save
 
-    assert_equal example.id, example.to_param
+    assert_equal example.id.to_s, example.to_param
   end
 
   it "to_param returns nil if to_key is nil" do

@@ -19,7 +19,7 @@ module AllFutures
     end
 
     def destroy
-      perform_operation(__callee__) if @_trigger_destroy_callback
+      perform_operation(__callee__)
     end
     alias_method :destroy!, :destroy
 
@@ -29,7 +29,7 @@ module AllFutures
     alias_method :save!, :save
 
     def update(attrs = {})
-      perform_operation(__callee__, attrs) if @_trigger_update_callback
+      perform_operation(__callee__, attrs)
     end
     alias_method :update!, :update
 
