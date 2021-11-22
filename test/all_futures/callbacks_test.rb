@@ -62,7 +62,7 @@ describe AllFutures::Callbacks do
     assert_equal 20, future.instance_variable_get("@count")
   end
 
-#   # update callbacks
+  # update callbacks
 
   it "basic before_update works" do
     class BeforeUpdateCallback < AllFutures::Base
@@ -126,7 +126,7 @@ describe AllFutures::Callbacks do
     assert_equal 40, future.instance_variable_get("@count")
   end
 
-#   # destroy callbacks
+  # destroy callbacks
 
   it "basic before_destroy works" do
     class BeforeDestroyCallback < AllFutures::Base
