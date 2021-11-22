@@ -3,9 +3,13 @@
 module AllFutures
   class Base < ActiveEntity::Base
     prepend ::AllFutures::Callbacks
-    include ::ActiveModel::Conversion
     include ::AllFutures::Persist
     include ::AllFutures::Dirty
+    include ::AllFutures::Timestamp
+    include ::ActiveModel::Conversion
+    extend ::ActiveModel::Naming
+    include ::ActiveRecord::Integration
+
     include ::Kredis::Attributes
 
     def initialize(attributes = {})
