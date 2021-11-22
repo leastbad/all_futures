@@ -30,8 +30,7 @@ module AllFutures
 
     def destroy
       _raise_readonly_record_error if readonly?
-      @destroyed = true
-      freeze
+      delete
     end
 
     def destroy!
