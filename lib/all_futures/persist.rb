@@ -45,6 +45,7 @@ module AllFutures
     end
 
     def increment(attribute, by = 1)
+      _raise_unknown_attribute_error(attribute) unless attributes.key?(attribute.to_s)
       _raise_readonly_attribute_error(attribute) if readonly_attribute?(attribute)
       self[attribute] ||= 0
       self[attribute] += by
@@ -53,7 +54,7 @@ module AllFutures
 
     def increment!(attribute, by = 1)
       increment attribute, by
-      public_send :"clear_#{attribute}_change"
+      save
       self
     end
 
