@@ -34,7 +34,10 @@ module AllFutures
     end
 
     def destroy!
-      destroy || RecordNotDestroyed.new("Failed to destroy the record", self)
+      _raise_readonly_record_error if readonly?
+      _raise_record_not_destroyed_error unless _delete_record > 0
+      @destroyed = true
+      freeze
     end
 
     def destroyed?
@@ -84,7 +87,7 @@ module AllFutures
     end
 
     def save!(**options, &block)
-      create_or_update(**options, &block) || raise(RecordNotSaved.new("Failed to save the record", self))
+      create_or_update(**options, &block) || _raise_record_not_saved_error
     end
 
     def toggle(attribute)
@@ -141,11 +144,19 @@ module AllFutures
     end
 
     def _raise_readonly_attribute_error(attribute)
-      raise ReadOnlyRecord, "#{attribute} is marked as readonly"
+      raise ActiveRecord::ReadOnlyRecord, "#{attribute} is marked as readonly"
     end
 
     def _raise_readonly_record_error
-      raise ReadOnlyRecord, "#{self.class} is marked as readonly"
+      raise ActiveRecord::ReadOnlyRecord, "#{self.class} is marked as readonly"
+    end
+
+    def _raise_record_not_destroyed_error
+      raise ActiveRecord::RecordNotDestroyed, "Failed to destroy the record"
+    end
+
+    def _raise_record_not_saved_error
+      raise ActiveRecord::RecordNotSaved, "Failed to save the record"
     end
 
     def _update_record

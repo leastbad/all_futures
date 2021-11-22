@@ -19,19 +19,28 @@ module AllFutures
     end
 
     def destroy
-      perform_operation(__callee__)
+      perform_operation(:destroy)
     end
-    alias_method :destroy!, :destroy
+
+    def destroy!
+      perform_operation(:destroy!)
+    end
 
     def save
-      perform_operation(__callee__)
+      perform_operation(:save)
     end
-    alias_method :save!, :save
+
+    def save!
+      perform_operation(:save!)
+    end
 
     def update(attrs = {})
-      perform_operation(__callee__, attrs)
+      perform_operation(:update, attrs)
     end
-    alias_method :update!, :update
+
+    def update!(attrs = {})
+      perform_operation(:update!, attrs)
+    end
 
     def perform_operation(operation, *args)
       if respond_to?(:run_callbacks)
