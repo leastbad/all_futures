@@ -91,12 +91,15 @@ module AllFutures
     end
 
     def toggle(attribute)
+      _raise_unknown_attribute_error(attribute) unless attributes.key?(attribute.to_s)
       self[attribute] = !public_send("#{attribute}?")
       self
     end
 
     def toggle!(attribute)
-      toggle(attribute).update_attribute attribute, self[attribute]
+      _raise_unknown_attribute_error(attribute) unless attributes.key?(attribute.to_s)
+      toggle attribute
+      update_attribute attribute, self[attribute]
     end
 
     def update(attrs)
@@ -110,6 +113,7 @@ module AllFutures
     end
 
     def update_attribute(attribute, value)
+      _raise_unknown_attribute_error(attribute) unless attributes.key?(attribute.to_s)
       _raise_readonly_record_error if readonly?
       _raise_readonly_attribute_error(attribute) if readonly_attribute? attribute
       public_send "#{attribute}=", value
@@ -157,6 +161,10 @@ module AllFutures
 
     def _raise_record_not_saved_error
       raise ActiveRecord::RecordNotSaved, "Failed to save the record"
+    end
+
+    def _raise_unknown_attribute_error(attribute)
+      raise ActiveModel::UnknownAttributeError.new(self, attribute)
     end
 
     def _update_record
