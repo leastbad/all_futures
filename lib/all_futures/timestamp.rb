@@ -2,8 +2,10 @@
 
 module AllFutures
   module Timestamp
+    attr_reader :updated_at
+
     def max_updated_column_timestamp
-      attributes[:updated_at]&.to_time
+      @updated_at&.to_time
     end
   end
 end

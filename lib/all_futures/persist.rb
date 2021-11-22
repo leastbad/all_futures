@@ -125,6 +125,9 @@ module AllFutures
       _raise_readonly_record_error if readonly?
       attributes.each_key { |attribute| _raise_readonly_attribute_error(attribute) if attr_readonly_enabled? && readonly_attribute?(attribute) && attribute_will_change?(attribute) }
       return false if destroyed?
+
+      @updated_at = Time.now
+
       changes_applied
       result = new_record? ? _create_record : _update_record
       result != false
