@@ -10,21 +10,21 @@ module AllFutures
     def initialize(attributes = {})
       # `active_entity/inheritance.rb:49` defaults `attributes` to `nil`, and our method signature has no effect
       attributes ||= {}
-      
-      # in order to avoid FrozenError: can't modify id when persisted in `id=` 
+
+      # in order to avoid FrozenError: can't modify id when persisted in `id=`
       attributes_for_super = attributes.key?(:id) ? attributes.except(:id) : attributes
-      super(attributes_for_super)
-      
-      @id = attributes&.fetch(:id, nil) || SecureRandom.uuid
-      @redis_key = "#{self.class.name}:#{@id}"
-      @new_record = !Kredis.redis.exists?(@redis_key)
+      super(attributes_for_super) do
+        @id = attributes&.fetch(:id, nil) || SecureRandom.uuid
+        @redis_key = "#{self.class.name}:#{@id}"
+        @new_record = !Kredis.redis.exists?(@redis_key)
 
-      @destroyed = false
-      @previously_new_record = false
+        @destroyed = false
+        @previously_new_record = false
 
-      @attributes.keys.each do |attr|
-        define_singleton_method("saved_change_to_#{attr}?") { saved_change_to_attribute?(attr) }
-        define_singleton_method("saved_change_to_#{attr}") { saved_change_to_attribute?(attr) ? [attribute_previously_was(attr), attribute_was(attr)] : nil }
+        @attributes.keys.each do |attr|
+          define_singleton_method("saved_change_to_#{attr}?") { saved_change_to_attribute?(attr) }
+          define_singleton_method("saved_change_to_#{attr}") { saved_change_to_attribute?(attr) ? [attribute_previously_was(attr), attribute_was(attr)] : nil }
+        end
       end
     end
 
