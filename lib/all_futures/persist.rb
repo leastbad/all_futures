@@ -162,10 +162,6 @@ module AllFutures
       raise ActiveRecord::RecordNotSaved, "Failed to save the record"
     end
 
-    def _raise_unknown_attribute_error(attribute)
-      raise ActiveModel::UnknownAttributeError.new(self, attribute)
-    end
-
     def _update_record
       _save_record
       @previously_new_record = false

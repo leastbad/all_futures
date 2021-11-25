@@ -54,5 +54,11 @@ module AllFutures
       raise FrozenError.new("can't modify id when persisted") unless new_record?
       @id = value.to_s
     end
+
+    private
+
+    def _raise_unknown_attribute_error(attribute)
+      raise ActiveModel::UnknownAttributeError.new(self, attribute)
+    end
   end
 end
