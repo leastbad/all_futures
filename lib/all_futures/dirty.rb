@@ -17,7 +17,7 @@ module AllFutures
 
     def rollback_attribute(attribute)
       _raise_unknown_attribute_error(attribute) unless attributes.key?(attribute.to_s)
-      if attribute_changed?(attribute)
+      if self[attribute] != attribute_previously_was(attribute)
         self[attribute] = attribute_previously_was(attribute)
         clear_attribute_change(attribute)
       end
@@ -63,6 +63,7 @@ module AllFutures
       _raise_unknown_attribute_error(attribute) unless attributes.key?(attribute.to_s)
       changes.key? attribute.to_s
     end
+    alias_method :attribute_will_change?, :attribute_changed?
 
     def attribute_changed!(attribute)
       _raise_unknown_attribute_error(attribute) unless attributes.key?(attribute.to_s)
