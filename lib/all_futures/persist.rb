@@ -61,12 +61,12 @@ module AllFutures
       @new_record
     end
 
-    def persisted?
-      !(@new_record || @destroyed)
-    end
-
     def previously_new_record?
       @previously_new_record
+    end
+
+    def persisted?
+      !(@new_record || @destroyed)
     end
 
     def reload

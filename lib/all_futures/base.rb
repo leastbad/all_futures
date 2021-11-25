@@ -24,7 +24,10 @@ module AllFutures
         @attributes.keys.each do |attr|
           define_singleton_method("saved_change_to_#{attr}?") { saved_change_to_attribute?(attr) }
           define_singleton_method("saved_change_to_#{attr}") { saved_change_to_attribute?(attr) ? [attribute_previously_was(attr), attribute_was(attr)] : nil }
-          define_singleton_method("#{attr}_will_change?") { attribute_will_change?(attr) }
+          define_singleton_method("#{attr}_changed?") { attribute_changed?(attr) }
+          define_singleton_method("rollback_#{attr}") { rollback_attribute(attr) }
+          define_singleton_method("rollback_#{attr}!") { rollback_attribute!(attr) }
+          define_singleton_method("restore_#{attr}") { restore_attribute(attr) }
         end
       end
     end
