@@ -46,7 +46,6 @@ module AllFutures
 
     def increment(attribute, by = 1)
       _raise_unknown_attribute_error(attribute) unless attributes.key?(attribute.to_s)
-      _raise_readonly_attribute_error(attribute) if readonly_attribute?(attribute)
       self[attribute] ||= 0
       self[attribute] += by
       self
@@ -115,9 +114,8 @@ module AllFutures
 
     def update_attribute(attribute, value)
       _raise_unknown_attribute_error(attribute) unless attributes.key?(attribute.to_s)
-      _raise_readonly_record_error if readonly?
-      _raise_readonly_attribute_error(attribute) if readonly_attribute? attribute
-      public_send "#{attribute}=", value
+      _raise_readonly_attribute_error(attribute) if attr_readonly_enabled? && readonly_attribute?(attribute) && attribute_will_change?(attribute)
+      write_attribute attribute, value
       save # validate: false
     end
 
@@ -125,7 +123,7 @@ module AllFutures
 
     def create_or_update(**)
       _raise_readonly_record_error if readonly?
-      attributes.each { |attribute| _raise_readonly_attribute_error(attribute) if readonly_attribute?(attribute) }
+      attributes.each_key { |attribute| _raise_readonly_attribute_error(attribute) if attr_readonly_enabled? && readonly_attribute?(attribute) && attribute_will_change?(attribute) }
       return false if destroyed?
       result = new_record? ? _create_record : _update_record
       yield(self) if block_given?

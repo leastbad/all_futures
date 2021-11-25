@@ -24,6 +24,7 @@ module AllFutures
         @attributes.keys.each do |attr|
           define_singleton_method("saved_change_to_#{attr}?") { saved_change_to_attribute?(attr) }
           define_singleton_method("saved_change_to_#{attr}") { saved_change_to_attribute?(attr) ? [attribute_previously_was(attr), attribute_was(attr)] : nil }
+          define_singleton_method("#{attr}_will_change?") { attribute_will_change?(attr) }
         end
       end
     end
@@ -39,6 +40,10 @@ module AllFutures
       raise ActiveRecord::RecordNotFound.new("Couldn't find #{name} with ID #{id}") unless json
 
       new json.merge(id: id)
+    end
+
+    def self.readonly_attribute?(name)
+      _attr_readonly.include?(name.to_s)
     end
 
     def id
