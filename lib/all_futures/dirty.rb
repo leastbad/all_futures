@@ -7,11 +7,11 @@ module AllFutures
     end
 
     def rollback_attributes(attr_names = changed)
-      attr_names.each { |attribute| rollback_attribute(attribute) }
+      attr_names.each { |attribute| _raise_unknown_attribute_error(attribute) unless attributes.key?(attribute.to_s) }.each { |attribute| rollback_attribute(attribute) }
     end
 
     def rollback_attributes!(attr_names = changed)
-      rollback_attributes
+      rollback_attributes(attr_names)
       save
     end
 
@@ -30,10 +30,11 @@ module AllFutures
     end
 
     def restore_attributes(attr_names = changed)
-      attr_names.each { |attribute| restore_attribute(attribute) }
+      attr_names.each { |attribute| _raise_unknown_attribute_error(attribute) unless attributes.key?(attribute.to_s) }.each { |attribute| restore_attribute(attribute) }
     end
 
     def restore_attribute(attribute)
+      _raise_unknown_attribute_error(attribute) unless attributes.key?(attribute.to_s)
       attribute = attribute.to_s
       if attribute_changed?(attribute)
         self[attribute] = attribute_was(attribute)
