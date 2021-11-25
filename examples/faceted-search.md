@@ -1,8 +1,8 @@
-# Usage
+---
+description: Filtering, Pagination and Sorting
+---
 
-Working with All Futures is very similar to working with a Rails model class. Depending on what you want to build, you will define the attributes, validations, callbacks and instance methods you need.
-
-## Creating a faceted search filter
+# Faceted Search
 
 Define a class that inherits from `AllFutures`, in a location that makes sense for your application. Many times, `app/models` is a suitable home but in the example, an `app/filters` folder was created.
 
@@ -30,19 +30,19 @@ end
 ```
 {% endcode %}
 
-The above code is an example of using All Futures to implement an exclusion filter. It's taken from the [Beast Mode repo](https://github.com/leastbad/beast\_mode), and is used to hold the values required to create a faceted search UI for a tabular dataset.
+The above code is an example of using AllFutures to implement an exclusion filter. It's taken from the [Beast Mode repo](https://github.com/leastbad/beast\_mode), and is used to hold the values required to create a faceted search UI for a tabular dataset.
 
-### Facets, Pagination and Sorting
+### Filtering, Pagination and Sorting
 
 When working with tabular data, there are typically three concerns:
 
-1. **Facets**: attributes used to exclude and filter data from the total pool of possible values
+1. **Filtering**: attributes used to reduce and exclude data from the total pool of possible values
 2. **Pagination**: attributes used to track the current page and number of items per page
 3. **Sorting**: attributes used to sort the filtered results in a specific direction (ASC vs DESC)
 
 The `CustomerFilter` doesn't describe the data - that's the model's job. Instead, facets describe the ways a user might exclude rows. Facets are composable, meaning that you can add them together to remove more data. Ultimately, the filter that is applied is the sum total of all active facets.
 
-![Hole In The Wall](.gitbook/assets/hole.jpg)
+![Hole In The Wall](../.gitbook/assets/hole.jpg)
 
 For example, the `lawyers` attribute is used to reduce the results to only rows where the name of the employer has the string `and` in it. `threshold` is used to alternate between loose and strict text matching.
 
@@ -53,7 +53,7 @@ You can [see this for yourself](https://beastmode.leastbad.com) if you search fo
 {% hint style="success" %}
 When designing faceted search UIs, it's important that you handle impossible states so that there are no combinations of filters which could produce invalid combinations or even errors.
 
-For example, it's recommended that you configure [Pagy](https://github.com/ddnexus/pagy) so that a user viewing page 10 is automatically taken to page 5 if the user adjust the number of records per-page from 10 to 20. Set `Pagy::VARS[:overflow] = :last_page` in your `pagy.rb` initializer.
+For example, it's recommended that you configure [Pagy](https://github.com/ddnexus/pagy) so that a user viewing page 10 is automatically taken to page 5 if the user adjust the number of records per-page from 10 to 20. Set `Pagy::DEFAULT[:overflow] = :last_page` in your `pagy.rb` initializer.
 {% endhint %}
 
 ### Providing a scope
@@ -82,9 +82,3 @@ The business logic required to filter the data is fully contained in the model a
 ### Draw the rest of the owl
 
 Going through building the rest of a faceted search is beyond the scope of this document, but you are encouraged to clone and explore the Beast Mode [codebase](https://github.com/leastbad/beast\_mode) and/or follow along with the [tutorial blog post](https://leastbad.com/beast-mode).
-
-{% hint style="info" %}
-There will soon be further guides suggesting strategies for real-time field validation and UI state persistence.
-
-What other scenarios would you like to see documented? [Let me know](https://discord.gg/stimulus-reflex) on Discord.
-{% endhint %}
