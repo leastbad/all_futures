@@ -1,6 +1,15 @@
 # Table of contents
 
-* [All Futures](README.md)
+* [AllFutures](README.md)
 * [Setup](setup.md)
-* [Usage](usage.md)
-
+* [Usage](usage/README.md)
+  * [Aggregations](usage/aggregations.md)
+  * [Aggressions](usage/aggressions.md)
+  * [Associations](usage/associations.md)
+  * [Callbacks](usage/callbacks.md)
+  * [Dirty](usage/dirty.md)
+  * [Enum](usage/enum.md)
+  * [Readonly](usage/readonly.md)
+  * [Validations](usage/validations.md)
+* [Examples](examples/README.md)
+  * [Faceted Search](examples/faceted-search.md)
