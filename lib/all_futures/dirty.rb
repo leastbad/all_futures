@@ -13,6 +13,10 @@ module AllFutures
       public_send("#{attribute}_will_change!")
     end
 
+    def attribute_will_change!(attribute)
+      super
+    end
+
     def clear_attribute_change(attribute)
       _raise_unknown_attribute_error(attribute) unless attributes.key?(attribute.to_s)
       super
