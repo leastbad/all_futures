@@ -2,6 +2,11 @@
 
 module AllFutures
   module Dirty
+    def attribute_change(attribute)
+      _raise_unknown_attribute_error(attribute) unless attributes.key?(attribute.to_s)
+      attribute_was(attribute) == self[attribute] ? nil : [attribute_was(attribute), self[attribute]]
+    end
+
     def attribute_changed?(attribute)
       _raise_unknown_attribute_error(attribute) unless attributes.key?(attribute.to_s)
       changes.key? attribute.to_s
