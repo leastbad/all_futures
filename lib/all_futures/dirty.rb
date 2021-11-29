@@ -18,6 +18,10 @@ module AllFutures
       public_send("#{attribute}_will_change!")
     end
 
+    def attribute_previous_change(attribute)
+      super
+    end
+
     def attribute_will_change!(attribute)
       super
     end
