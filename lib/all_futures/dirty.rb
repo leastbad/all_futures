@@ -76,23 +76,13 @@ module AllFutures
       save
     end
 
-    def saved_change_to_attribute?(attribute)
-      _raise_unknown_attribute_error(attribute) unless attributes.key?(attribute.to_s)
-      attribute_previously_was(attribute) != attribute_was(attribute)
-    end
-
-    def saved_change_to_attribute(attribute)
-      _raise_unknown_attribute_error(attribute) unless attributes.key?(attribute.to_s)
-      attribute_previously_was(attribute) != attribute_was(attribute) ? [attribute_previously_was(attribute), attribute_was(attribute)] : nil
-    end
-
     def saved_changes?
       saved_changes.any?
     end
     alias_method :previous_changes?, :saved_changes?
 
     def saved_changes
-      attributes.select { |attribute| saved_change_to_attribute? attribute }
+      attributes.select { |attribute| attribute_previously_changed? attribute }
     end
   end
 end
