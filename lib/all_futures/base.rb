@@ -6,6 +6,7 @@ module AllFutures
     include ::ActiveModel::Conversion
     include ::AllFutures::Persist
     include ::AllFutures::Dirty
+    include ::Kredis::Attributes
 
     def initialize(attributes = {})
       # `active_entity/inheritance.rb:49` defaults `attributes` to `nil`, and our method signature has no effect
@@ -16,7 +17,7 @@ module AllFutures
       super(attributes_for_super) do
         @id = attributes&.fetch(:id, nil) || SecureRandom.uuid
         @redis_key = "#{self.class.name}:#{@id}"
-        @new_record = !Kredis.redis.exists?(@redis_key)
+        @new_record = !self.class.exists?(@id)
 
         @destroyed = false
         @previously_new_record = false
@@ -44,6 +45,10 @@ module AllFutures
       new json.merge(id: id)
     end
 
+    def self.exists?(id)
+      Kredis.redis.exists?("#{self.name}:#{id}")
+    end
+
     def self.readonly_attribute?(name)
       _attr_readonly.include?(name.to_s)
     end
@@ -58,7 +63,7 @@ module AllFutures
     end
 
     def to_dom_id
-      [self.class.name.underscore.dasherize, id].join("-")
+      [self.class.name.gsub("/", ":").underscore.dasherize, id].join("-")
     end
 
     def to_s
