@@ -13,7 +13,7 @@ module AllFutures::Attributes
             options[:key]
           else
             record_id = try(:id) or raise ActiveRecord::RecordNotSaved, "AllFutures requires a unique key. Either save this record before accessing #{name}, or pass a custom key."
-            "#{self.class.name.tableize.gsub("/", ":")}:#{record_id}:#{name}"
+            "#{self.class.name.tableize.tr("/", ":")}:#{record_id}:#{name}"
           end
           af = klass.exists?(af_key) ? klass.find(af_key) : klass.create(id: af_key)
           instance_variable_set(ivar_symbol, af)

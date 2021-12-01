@@ -46,7 +46,7 @@ module AllFutures
     end
 
     def self.exists?(id)
-      Kredis.redis.exists?("#{self.name}:#{id}")
+      Kredis.redis.exists?("#{name}:#{id}")
     end
 
     def self.readonly_attribute?(name)
@@ -63,7 +63,7 @@ module AllFutures
     end
 
     def to_dom_id
-      [self.class.name.gsub("/", ":").underscore.dasherize, id].join("-")
+      [self.class.name.tr("/", ":").underscore.dasherize, id].join("-")
     end
 
     def to_s
