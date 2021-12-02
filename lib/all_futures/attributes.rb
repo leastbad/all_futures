@@ -1,22 +1,26 @@
-module AllFutures::Attributes
-  extend ActiveSupport::Concern
+module AllFutures
+  class ParentModelNotSavedYet < StandardError; end
 
-  class_methods do
-    def has_future(name, klass, **options)
-      ivar_symbol = :"@#{name}_all_futures"
+  module Attributes
+    extend ActiveSupport::Concern
 
-      define_method(name) do
-        if instance_variable_defined?(ivar_symbol)
-          instance_variable_get(ivar_symbol)
-        else
-          af_key = if options[:key]
-            options[:key]
+    class_methods do
+      def has_future(name, klass, **options)
+        ivar_symbol = :"@#{name}_all_futures"
+
+        define_method(name) do
+          if instance_variable_defined?(ivar_symbol)
+            instance_variable_get(ivar_symbol)
           else
-            record_id = try(:id) or raise ActiveRecord::RecordNotSaved, "AllFutures requires a unique key. Either save this record before accessing #{name}, or pass a custom key."
-            "#{self.class.name.tableize.tr("/", ":")}:#{record_id}:#{name}"
+            af_key = if options[:key]
+              options[:key]
+            else
+              record_id = try(:id) or raise AllFutures::ParentModelNotSavedYet, "AllFutures requires a unique key. Either save the parent model before accessing #{name}, or pass a custom key."
+              "#{self.class.name.tableize.tr("/", ":")}:#{record_id}:#{name}"
+            end
+            af = klass.exists?(af_key) ? klass.find(af_key) : klass.create(id: af_key)
+            instance_variable_set(ivar_symbol, af)
           end
-          af = klass.exists?(af_key) ? klass.find(af_key) : klass.create(id: af_key)
-          instance_variable_set(ivar_symbol, af)
         end
       end
     end
