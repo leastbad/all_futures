@@ -127,7 +127,7 @@ All three methods return the `attributes` Hash when successful.
 
 Returns `true` if `comparison_object` is the same exact AllFutures model instance **or** `comparison_object` is of the same type and has the same `id`.
 
-Note also that destroying a record preserves its ID in the model instance, so deleted models are still comparable.
+Note also that destroying a record preserves its `id` in the model instance, so deleted models are still comparable.
 
 #### assign\_attributes(Hash)
 
@@ -173,7 +173,7 @@ Once the instance has been saved, the `id` is permanent. Attempts to change it w
 
 #### reload
 
-This will update all attributes with the current data from Redis and resets the dirty checking mechanism. Only attributes that are divergent from Redis are touched. It will return the model instance.
+This will refresh all attributes and previous attributes with the current data from Redis. It will return the model instance with the current values.
 
 {% hint style="info" %}
 Unfortunately, it's not currently possible for an AllFutures instance to track changes in Redis that are made after the attributes are loaded. While [I have written about how this problem could be solved](https://dev.to/leastbad/async-redis-key-mutation-notifications-in-rails-4hng) with Redis pubsub, it really seemed as though people didn't understand why this would be useful. If you are equally excited about a **reactive** AllFutures in the future, please let me know on [Discord](https://discord.gg/stimulus-reflex).
@@ -205,11 +205,11 @@ Use this method to programmatically update attributes. No callbacks will be exec
 
 #### attribute\_names
 
-`attribute_names` returns an Array of Strings containing the attributes on your AllFutures model instance, as defined in your model class when you use the [`attribute`](https://api.rubyonrails.org/classes/ActiveRecord/Attributes/ClassMethods.html#method-i-attribute) method.
+Returns an Array of Strings containing the attributes on your AllFutures model instance, as defined in your model class when you use the [`attribute`](https://api.rubyonrails.org/classes/ActiveRecord/Attributes/ClassMethods.html#method-i-attribute) method.
 
 #### attributes
 
-`attributes` returns a Hash of the attributes on your AllFutures model instance, as defined in your model class when you use the [`attribute`](https://api.rubyonrails.org/classes/ActiveRecord/Attributes/ClassMethods.html#method-i-attribute) method. You can pass this Hash to the `new` or `create` method of an ActiveRecord model class.
+Returns a Hash of the attributes on your AllFutures model instance, as defined in your model class when you use the [`attribute`](https://api.rubyonrails.org/classes/ActiveRecord/Attributes/ClassMethods.html#method-i-attribute) method. You can pass this Hash to the `new` or `create` method of an ActiveRecord model class.
 
 The `attributes` Hash will not contain `id`, which is a property.
 
@@ -236,6 +236,22 @@ Returns `true` if the current instance was a `new_record?` before it was saved t
 ### Methods to overwrite
 
 These methods are already defined on your AllFutures class. 90% of the time, these defaults are great. If you have complex needs, you can redefine them with your own logic.
+
+#### to\_dom\_id
+
+Responsible for converting the model instance into a valid DOM `id`. Can be passed to a StimulusReflex Morph and used as a CableReady `selector`. Converts namespaced classes to double-dashes.
+
+```ruby
+def to_dom_id
+  [self.class.name.underscore.dasherize.gsub("/", "--"), id].join("-")
+end
+```
+
+{% hint style="warning" %}
+Only [ASCII](https://developer.mozilla.org/en-US/docs/Glossary/ASCII) letters, digits, `_`, and `-` should be used for an `id`. The `id` attribute should start with a letter.
+
+**Do** **not** add a `#` prefix to the return value.
+{% endhint %}
 
 #### to\_key
 

@@ -133,6 +133,10 @@ Clears all dirty data: current changes and previous changes.
 
 Reports `true` or `false` depending on whether there any attributes with data that have changed since the last `save` operation.
 
+#### previous\_attributes
+
+Returns a Hash of the attributes on your AllFutures model instance, with the values reflecting their state before the last `save` operation.
+
 #### previous\_changes, previous\_changes?
 
 Returns a Hash of all changes that were persisted with the most recent `save` operation, where the key is the name of the attribute in String form and the value is is an Array containing the value before and the value after it was saved.
