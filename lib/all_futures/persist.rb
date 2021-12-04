@@ -70,14 +70,14 @@ module AllFutures
     end
 
     def reload
-      record = self.class.load(id)
+      record = self.class.send(:load, id)
       attributes.each do |key, value|
-        self[key] = record["attributes"][key] if record["attributes"][key] != value
+        self[key] = record["attributes"][key]
       end
       @new_record = false
       @previously_new_record = false
       instance_variable_set "@mutations_from_database", ActiveModel::NullMutationTracker.instance
-      self.class.set_previous_attributes(self, record)
+      self.class.send(:set_previous_attributes, self, record)
     end
 
     def save

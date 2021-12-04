@@ -41,9 +41,8 @@ module AllFutures
     alias_method :changed_attributes?, :dirty?
 
     def previous_attributes
-      attribute_names.inject({}) do | hash, attribute |
+      attribute_names.each_with_object({}) do |attribute, hash|
         hash[attribute] = attribute_previously_was(attribute)
-        hash
       end
     end
 

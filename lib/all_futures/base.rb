@@ -32,23 +32,44 @@ module AllFutures
       end
     end
 
-    def self.create(attributes = {})
-      new(attributes).tap { |record| record.save }
-    end
+    class << self
+      def create(attributes = {})
+        new(attributes).tap { |record| record.save }
+      end
 
-    def self.find(id)
-      raise ActiveRecord::RecordNotFound.new("Couldn't find #{name} without an ID") unless id
-      record = self.load(id)
-      model = new record["attributes"].merge(id: id)
-      set_previous_attributes(model, record)
-    end
+      def find(id)
+        raise ActiveRecord::RecordNotFound.new("Couldn't find #{name} without an ID") unless id
+        record = self.load(id)
+        model = new record["attributes"].merge(id: id)
+        set_previous_attributes(model, record)
+      end
 
-    def self.exists?(id)
-      Kredis.redis.exists?("#{name}:#{id}")
-    end
+      def exists?(id)
+        Kredis.redis.exists?("#{name}:#{id}")
+      end
 
-    def self.readonly_attribute?(name)
-      _attr_readonly.include?(name.to_s)
+      def readonly_attribute?(name)
+        _attr_readonly.include?(name.to_s)
+      end
+
+      private
+
+      def load(id)
+        record = Kredis.json("#{name}:#{id}").value
+        raise ActiveRecord::RecordNotFound.new("Couldn't find #{name} with ID #{id}") unless record
+        record
+      end
+
+      def set_previous_attributes(model, record)
+        tracker = ActiveModel::AttributeMutationTracker.new(model.instance_variable_get("@attributes"))
+        previous_values = tracker.instance_variable_get("@attributes").instance_variable_get("@attributes")
+        previous_values.each do |key, attribute|
+          original = attribute.instance_variable_get("@original_attribute")
+          original.instance_variable_set "@value_before_type_cast", record["previous_attributes"][key]
+        end
+        model.instance_variable_set "@mutations_before_last_save", tracker
+        model
+      end
     end
 
     def id
@@ -73,23 +94,6 @@ module AllFutures
     end
 
     private
-
-    def self.load(id)
-      record = Kredis.json("#{name}:#{id}").value
-      raise ActiveRecord::RecordNotFound.new("Couldn't find #{name} with ID #{id}") unless record
-      record
-    end
-
-    def self.set_previous_attributes(model, record)
-      tracker = ActiveModel::AttributeMutationTracker.new(model.instance_variable_get "@attributes")
-      previous_values = tracker.instance_variable_get("@attributes").instance_variable_get("@attributes")
-      previous_values.each do |key, attribute|
-        original = attribute.instance_variable_get("@original_attribute")
-        original.instance_variable_set "@value_before_type_cast", record["previous_attributes"][key]
-      end
-      model.instance_variable_set "@mutations_before_last_save", tracker
-      model
-    end
 
     def _raise_unknown_attribute_error(attribute)
       raise ActiveModel::UnknownAttributeError.new(self, attribute)
