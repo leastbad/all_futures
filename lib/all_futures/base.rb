@@ -82,7 +82,7 @@ module AllFutures
     end
 
     def to_dom_id
-      [self.class.name.tr("/", ":").underscore.dasherize, id].join("-")
+      [self.class.name.underscore.dasherize.gsub("/", "--"), id].join("-")
     end
 
     def to_s
