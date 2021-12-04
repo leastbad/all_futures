@@ -38,11 +38,9 @@ module AllFutures
 
     def self.find(id)
       raise ActiveRecord::RecordNotFound.new("Couldn't find #{name} without an ID") unless id
-
-      json = Kredis.json("#{name}:#{id}").value
-      raise ActiveRecord::RecordNotFound.new("Couldn't find #{name} with ID #{id}") unless json
-
-      new json.merge(id: id)
+      record = self.load(id)
+      model = new record["attributes"].merge(id: id)
+      set_previous_attributes(model, record)
     end
 
     def self.exists?(id)
@@ -75,6 +73,23 @@ module AllFutures
     end
 
     private
+
+    def self.load(id)
+      record = Kredis.json("#{name}:#{id}").value
+      raise ActiveRecord::RecordNotFound.new("Couldn't find #{name} with ID #{id}") unless record
+      record
+    end
+
+    def self.set_previous_attributes(model, record)
+      tracker = ActiveModel::AttributeMutationTracker.new(model.instance_variable_get "@attributes")
+      previous_values = tracker.instance_variable_get("@attributes").instance_variable_get("@attributes")
+      previous_values.each do |key, attribute|
+        original = attribute.instance_variable_get("@original_attribute")
+        original.instance_variable_set "@value_before_type_cast", record["previous_attributes"][key]
+      end
+      model.instance_variable_set "@mutations_before_last_save", tracker
+      model
+    end
 
     def _raise_unknown_attribute_error(attribute)
       raise ActiveModel::UnknownAttributeError.new(self, attribute)

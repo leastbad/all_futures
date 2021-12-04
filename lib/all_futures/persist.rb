@@ -70,24 +70,24 @@ module AllFutures
     end
 
     def reload
-      json = Kredis.json("#{self.class.name}:#{@id}").value
+      record = self.class.load(id)
       attributes.each do |key, value|
-        self[key] = json[key] if json[key] != value
+        self[key] = record["attributes"][key] if record["attributes"][key] != value
       end
       @new_record = false
       @previously_new_record = false
-      clear_changes_information
-      self
+      instance_variable_set "@mutations_from_database", ActiveModel::NullMutationTracker.instance
+      self.class.set_previous_attributes(self, record)
     end
 
-    def save(**options, &block)
-      create_or_update(**options, &block)
+    def save
+      create_or_update
     rescue ActiveRecord::RecordInvalid
       false
     end
 
-    def save!(**options, &block)
-      create_or_update(**options, &block) || _raise_record_not_saved_error
+    def save!
+      create_or_update || _raise_record_not_saved_error
     end
 
     def toggle(attribute)
@@ -116,18 +116,17 @@ module AllFutures
       _raise_unknown_attribute_error(attribute) unless attributes.key?(attribute.to_s)
       _raise_readonly_attribute_error(attribute) if attr_readonly_enabled? && readonly_attribute?(attribute) && attribute_will_change?(attribute)
       write_attribute attribute, value
-      save # validate: false
+      save
     end
 
     private
 
-    def create_or_update(**)
+    def create_or_update
       _raise_readonly_record_error if readonly?
       attributes.each_key { |attribute| _raise_readonly_attribute_error(attribute) if attr_readonly_enabled? && readonly_attribute?(attribute) && attribute_will_change?(attribute) }
       return false if destroyed?
-      result = new_record? ? _create_record : _update_record
-      yield(self) if block_given?
       changes_applied
+      result = new_record? ? _create_record : _update_record
       result != false
     end
 
@@ -143,7 +142,7 @@ module AllFutures
     end
 
     def _save_record
-      Kredis.json(@redis_key).value = attributes
+      Kredis.json(@redis_key).value = {attributes: attributes, previous_attributes: previous_attributes}
     end
 
     def _raise_readonly_attribute_error(attribute)

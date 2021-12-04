@@ -40,6 +40,17 @@ module AllFutures
     end
     alias_method :changed_attributes?, :dirty?
 
+    def previous_attributes
+      attribute_names.inject({}) do | hash, attribute |
+        hash[attribute] = attribute_previously_was(attribute)
+        hash
+      end
+    end
+
+    def mutations_before_last_save
+      super
+    end
+
     def restore_attribute(attribute)
       _raise_unknown_attribute_error(attribute) unless attributes.key?(attribute.to_s)
       attribute = attribute.to_s
