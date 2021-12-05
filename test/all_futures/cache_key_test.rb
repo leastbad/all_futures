@@ -17,4 +17,10 @@ describe AllFutures::Base do
 
     assert_equal "example_models/#{example.id}-#{example.updated_at.utc.to_s(:usec)}", example.cache_key
   end
+
+  it "returns a valid cache key with version for a persisted record" do
+    example = ExampleModel.create
+
+    assert_equal "example_models/#{example.id}-#{example.updated_at.utc.to_s(:usec)}", example.cache_key_with_version
+  end
 end
