@@ -6,6 +6,7 @@ module AllFutures
     include ::ActiveModel::Conversion
     include ::AllFutures::Persist
     include ::AllFutures::Dirty
+    include ::AllFutures::Versioning
     include ::Kredis::Attributes
 
     def initialize(attributes = {})
