@@ -6,6 +6,7 @@ module AllFutures
     include ::AllFutures::Persist
     include ::AllFutures::Dirty
     include ::AllFutures::Timestamp
+    include ::AllFutures::Versioning
     include ::ActiveModel::Conversion
     extend ::ActiveModel::Naming
     include ::ActiveRecord::Integration
