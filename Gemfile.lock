@@ -3,6 +3,9 @@ PATH
   specs:
     all_futures (1.0.3)
       activeentity (~> 6.1)
+      activemodel (>= 4.0)
+      activerecord (>= 4.0)
+      activesupport (>= 4.0)
       kredis (~> 1.0)
 
 GEM
@@ -54,6 +57,8 @@ GEM
     method_source (1.0.0)
     minitest (5.14.4)
     nokogiri (1.12.5-arm64-darwin)
+      racc (~> 1.4)
+    nokogiri (1.12.5-x86_64-darwin)
       racc (~> 1.4)
     nokogiri (1.12.5-x86_64-linux)
       racc (~> 1.4)
@@ -116,6 +121,7 @@ GEM
 
 PLATFORMS
   arm64-darwin-21
+  x86_64-darwin-19
   x86_64-linux
 
 DEPENDENCIES

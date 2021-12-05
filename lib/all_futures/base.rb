@@ -3,10 +3,14 @@
 module AllFutures
   class Base < ActiveEntity::Base
     prepend ::AllFutures::Callbacks
-    include ::ActiveModel::Conversion
     include ::AllFutures::Persist
     include ::AllFutures::Dirty
+    include ::AllFutures::Timestamp
     include ::AllFutures::Versioning
+    include ::ActiveModel::Conversion
+    extend ::ActiveModel::Naming
+    include ::ActiveRecord::Integration
+
     include ::Kredis::Attributes
 
     def initialize(attributes = {})
@@ -17,6 +21,7 @@ module AllFutures
       attributes_for_super = attributes.key?(:id) ? attributes.except(:id) : attributes
       super(attributes_for_super) do
         @id = attributes&.fetch(:id, nil) || SecureRandom.uuid
+        @updated_at = attributes&.fetch(:updated_at, Time.now)
         @redis_key = "#{self.class.name}:#{@id}"
         @new_record = !self.class.exists?(@id)
 
