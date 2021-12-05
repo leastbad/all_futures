@@ -3,7 +3,6 @@
 require "active_entity/railtie"
 require "active_record/errors"
 require "active_record/integration"
-require "active_record/validations"
 require "kredis"
 require "all_futures/version"
 require "all_futures/callbacks"
