@@ -49,7 +49,7 @@ module AllFutures
         raise ActiveRecord::RecordNotFound.new("Couldn't find #{name} without an ID") unless id
         record = load_model(id)
         model = new record["attributes"].merge(id: id)
-        self.load_versions(model, record) if versioning?
+        self.load_versions(model, record)
         set_previous_attributes(model, record)
       end
 
