@@ -70,12 +70,16 @@ module AllFutures
     end
 
     def reload
-      record = self.class.send(:load, id)
+      record = self.class.send(:load_model, id)
       attributes.each do |key, value|
         self[key] = record["attributes"][key]
       end
       @new_record = false
       @previously_new_record = false
+      if versioning_enabled?
+        @_current_version = record["current_version"]
+        @_versions = record["versions"]
+      end
       instance_variable_set "@mutations_from_database", ActiveModel::NullMutationTracker.instance
       self.class.send(:set_previous_attributes, self, record)
     end
@@ -152,7 +156,22 @@ module AllFutures
     end
 
     def _save_record
-      Kredis.json(@redis_key).value = {attributes: attributes, previous_attributes: previous_attributes}
+      if versioning_enabled?
+        if new_record?
+          @_current_version = 1
+        else
+          record = Kredis.json(@redis_key).value
+          @_current_version = record["current_version"] + 1
+          @_versions = record["versions"].transform_keys(&:to_i)
+        end
+        @_versions[current_version] = attributes
+      end
+      Kredis.json(@redis_key).value = {
+        attributes: attributes,
+        previous_attributes: previous_attributes,
+        current_version: current_version,
+        versions: versions
+      }
     end
 
     def _raise_readonly_attribute_error(attribute)

@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 module AllFutures
-  module Versioning
+  class VersionNotFound < StandardError; end
+
+  module Versions
     extend ActiveSupport::Concern
 
     included do
@@ -9,7 +11,7 @@ module AllFutures
     end
 
     def current_version
-      @_current_version || 0
+      @_current_version.to_i
     end
 
     def disable_versioning!
@@ -20,8 +22,13 @@ module AllFutures
       @_versioning_enabled = true
     end
 
+    def version(index)
+      _raise_version_not_found(index) unless versions.key?(index)
+      versions[index]
+    end
+
     def versions
-      @_versions || []
+      @_versions
     end
 
     def without_versioning
@@ -38,9 +45,21 @@ module AllFutures
       @_versioning_enabled
     end
 
+    private
+
+    def _raise_version_not_found(index)
+      raise AllFutures::VersionNotFound, "Could not find version #{index}"
+    end
+
     module ClassMethods
       def enable_versioning!
         self.versioning = true
+      end
+
+      def load_versions(model, record)
+        return if record["versions"].nil?
+        model.instance_variable_set "@_current_version", record["current_version"]
+        model.instance_variable_set "@_versions", record["versions"].transform_keys(&:to_i)
       end
     end
   end

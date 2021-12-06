@@ -3,14 +3,13 @@
 module AllFutures
   class Base < ActiveEntity::Base
     prepend ::AllFutures::Callbacks
+    extend ::ActiveModel::Naming
     include ::AllFutures::Persist
     include ::AllFutures::Dirty
     include ::AllFutures::Timestamp
-    include ::AllFutures::Versioning
+    include ::AllFutures::Versions
     include ::ActiveModel::Conversion
-    extend ::ActiveModel::Naming
     include ::ActiveRecord::Integration
-
     include ::Kredis::Attributes
 
     def initialize(attributes = {})
@@ -28,6 +27,8 @@ module AllFutures
         @destroyed = false
         @previously_new_record = false
         @_versioning_enabled = self.class.versioning
+        @_versions = {}
+        @_current_version = nil
 
         @attributes.keys.each do |attr|
           define_singleton_method("#{attr}_changed?") { attribute_changed?(attr) }
@@ -46,9 +47,9 @@ module AllFutures
 
       def find(id)
         raise ActiveRecord::RecordNotFound.new("Couldn't find #{name} without an ID") unless id
-        record = self.load(id)
+        record = load_model(id)
         model = new record["attributes"].merge(id: id)
-        Version.load(model, record) if versioning_enabled?
+        self.load_versions(model, record) if versioning?
         set_previous_attributes(model, record)
       end
 
@@ -62,7 +63,7 @@ module AllFutures
 
       private
 
-      def load(id)
+      def load_model(id)
         record = Kredis.json("#{name}:#{id}").value
         raise ActiveRecord::RecordNotFound.new("Couldn't find #{name} with ID #{id}") unless record
         record
