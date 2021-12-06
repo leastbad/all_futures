@@ -27,6 +27,7 @@ module AllFutures
 
         @destroyed = false
         @previously_new_record = false
+        @_versioning_enabled = self.class.versioning
 
         @attributes.keys.each do |attr|
           define_singleton_method("#{attr}_changed?") { attribute_changed?(attr) }
@@ -47,6 +48,7 @@ module AllFutures
         raise ActiveRecord::RecordNotFound.new("Couldn't find #{name} without an ID") unless id
         record = self.load(id)
         model = new record["attributes"].merge(id: id)
+        Version.load(model, record) if versioning_enabled?
         set_previous_attributes(model, record)
       end
 

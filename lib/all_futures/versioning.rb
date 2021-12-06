@@ -5,7 +5,11 @@ module AllFutures
     extend ActiveSupport::Concern
 
     included do
-      # class_attribute :_attr_readonly, instance_accessor: false, default: []
+      class_attribute :versioning, instance_accessor: false, default: false
+    end
+
+    def current_version
+      @_current_version || 0
     end
 
     def disable_versioning!
@@ -14,6 +18,10 @@ module AllFutures
 
     def enable_versioning!
       @_versioning_enabled = true
+    end
+
+    def versions
+      @_versions || []
     end
 
     def without_versioning
@@ -26,30 +34,14 @@ module AllFutures
       self
     end
 
-    def _versioning_enabled
+    def versioning_enabled?
       @_versioning_enabled
     end
-    alias attr_versioning_enabled? _versioning_enabled
 
-    # def readonly_attribute?(name)
-    #   self.class.readonly_attribute?(name)
-    # end
-
-    # module ClassMethods
-    #   # Attributes listed as readonly will be used to create a new record but update operations will
-    #   # ignore these fields.
-    #   def attr_readonly(*attributes)
-    #     self._attr_readonly = Set.new(attributes.map(&:to_s)) + (_attr_readonly || [])
-    #   end
-
-    #   # Returns an array of all the attributes that have been specified as readonly.
-    #   def readonly_attributes
-    #     _attr_readonly
-    #   end
-
-    #   def readonly_attribute?(name) # :nodoc:
-    #     _attr_readonly.include?(name)
-    #   end
-    # end
+    module ClassMethods
+      def enable_versioning!
+        self.versioning = true
+      end
+    end
   end
 end
