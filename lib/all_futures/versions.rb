@@ -34,7 +34,9 @@ module AllFutures
 
     def version(index)
       _raise_version_not_found(index) unless versions.key?(index)
-      Version.new(versions[index]["attributes"], Time.zone.parse(versions[index]["updated_at"]))
+      updated_at = versions[index]["updated_at"]
+      updated_at = updated_at.is_a?(ActiveSupport::TimeWithZone) ? updated_at : Time.zone.parse(updated_at)
+      Version.new(versions[index]["attributes"], updated_at)
     end
 
     def versions
