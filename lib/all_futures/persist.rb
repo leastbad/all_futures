@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module AllFutures
+  class RecordNotSaved < StandardError; end
+
   module Persist
     def becomes(klass)
       became = klass.allocate
@@ -70,6 +72,7 @@ module AllFutures
     end
 
     def reload
+      raise AllFutures::RecordNotSaved.new("Can't load model that hasn't been saved") unless persisted?
       record = self.class.send(:load_model, id)
       attributes.each do |key, value|
         self[key] = record["attributes"][key]
@@ -78,10 +81,12 @@ module AllFutures
       @previously_new_record = false
       if versioning_enabled?
         @_current_version = record["current_version"]
-        @_versions = record["versions"]
+        @_versions = record["versions"].transform_keys(&:to_i)
       end
       instance_variable_set "@mutations_from_database", ActiveModel::NullMutationTracker.instance
+      instance_variable_set "@updated_at", Time.zone.parse(record["updated_at"])
       self.class.send(:set_previous_attributes, self, record)
+      self
     end
 
     def save
@@ -127,7 +132,7 @@ module AllFutures
     end
 
     def touch
-      @updated_at = Time.now
+      @updated_at = Time.current
     end
 
     private
@@ -164,10 +169,15 @@ module AllFutures
           @_current_version = record["current_version"] + 1
           @_versions = record["versions"].transform_keys(&:to_i)
         end
-        @_versions[current_version] = attributes
+        @_versions[current_version] = {
+          "attributes" => attributes,
+          "updated_at" => Time.current
+        }
       end
       Kredis.json(@redis_key).value = {
         attributes: attributes,
+        created_at: created_at,
+        updated_at: touch,
         previous_attributes: previous_attributes,
         current_version: current_version,
         versions: versions

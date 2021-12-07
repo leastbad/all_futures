@@ -6,12 +6,22 @@ module AllFutures
   module Versions
     extend ActiveSupport::Concern
 
+    Version = Struct.new(:attributes, :updated_at) do
+      def to_h
+        attributes
+      end
+
+      def inspect
+        attributes
+      end
+    end
+
     included do
       class_attribute :versioning, instance_accessor: false, default: false
     end
 
     def current_version
-      @_current_version.to_i
+      @_current_version.nil? ? nil : @_current_version.to_i
     end
 
     def disable_versioning!
@@ -24,7 +34,7 @@ module AllFutures
 
     def version(index)
       _raise_version_not_found(index) unless versions.key?(index)
-      versions[index]
+      Version.new(versions[index]["attributes"], Time.zone.parse(versions[index]["updated_at"]))
     end
 
     def versions

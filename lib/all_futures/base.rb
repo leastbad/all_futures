@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module AllFutures
+  class RecordNotFound < StandardError; end
+
   class Base < ActiveEntity::Base
     prepend ::AllFutures::Callbacks
     extend ::ActiveModel::Naming
@@ -12,6 +14,8 @@ module AllFutures
     include ::ActiveRecord::Integration
     include ::Kredis::Attributes
 
+    attr_reader :created_at, :updated_at
+
     def initialize(attributes = {})
       # `active_entity/inheritance.rb:49` defaults `attributes` to `nil`, and our method signature has no effect
       attributes ||= {}
@@ -20,7 +24,8 @@ module AllFutures
       attributes_for_super = attributes.key?(:id) ? attributes.except(:id) : attributes
       super(attributes_for_super) do
         @id = attributes&.fetch(:id, nil) || SecureRandom.uuid
-        @updated_at = attributes&.fetch(:updated_at, Time.now)
+        @created_at = Time.current
+        @updated_at = attributes&.fetch(:updated_at, Time.current)
         @redis_key = "#{self.class.name}:#{@id}"
         @new_record = !self.class.exists?(@id)
 
@@ -49,8 +54,11 @@ module AllFutures
         raise ActiveRecord::RecordNotFound.new("Couldn't find #{name} without an ID") unless id
         record = load_model(id)
         model = new record["attributes"].merge(id: id)
-        self.load_versions(model, record)
+        load_versions(model, record)
         set_previous_attributes(model, record)
+        model.instance_variable_set "@created_at", Time.zone.parse(record["created_at"])
+        model.instance_variable_set "@updated_at", Time.zone.parse(record["updated_at"])
+        model
       end
 
       def exists?(id)
@@ -65,7 +73,7 @@ module AllFutures
 
       def load_model(id)
         record = Kredis.json("#{name}:#{id}").value
-        raise ActiveRecord::RecordNotFound.new("Couldn't find #{name} with ID #{id}") unless record
+        raise AllFutures::RecordNotFound.new("Couldn't find #{name} with ID #{id}") unless record
         record
       end
 
@@ -77,7 +85,6 @@ module AllFutures
           original.instance_variable_set "@value_before_type_cast", record["previous_attributes"][key]
         end
         model.instance_variable_set "@mutations_before_last_save", tracker
-        model
       end
     end
 
