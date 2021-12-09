@@ -6,6 +6,7 @@ module AllFutures
   class Base < ActiveEntity::Base
     prepend ::AllFutures::Callbacks
     extend ::ActiveModel::Naming
+    extend ::AllFutures::Translation
     include ::AllFutures::Persist
     include ::AllFutures::Dirty
     include ::AllFutures::Timestamp
@@ -115,4 +116,6 @@ module AllFutures
       raise ActiveModel::UnknownAttributeError.new(self, attribute)
     end
   end
+
+  ActiveSupport.run_load_hooks(:all_futures, Base)
 end

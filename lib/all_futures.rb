@@ -11,6 +11,11 @@ require "all_futures/dirty"
 require "all_futures/attributes"
 require "all_futures/persist"
 require "all_futures/timestamp"
+require "all_futures/translation"
 require "all_futures/base"
 
 require "all_futures/railtie" if defined?(Rails::Railtie)
+
+ActiveSupport.on_load(:i18n) do
+  I18n.load_path << File.expand_path("all_futures/locale/en.yml", __dir__)
+end
