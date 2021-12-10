@@ -66,7 +66,7 @@ You can now update your instance across multiple calls or requests, regardless o
 AllFutures v1 persisted the attributes every time you set the value of an attribute using bracket notation. **This behavior has been removed.** An explicit `save` operation is now required to persist changes.
 {% endhint %}
 
-### Class methods
+### Creating and finding instances
 
 There are two ways to create an AllFutures class instance: `new` and `create`. Both methods accept an optional Hash of attributes:
 
@@ -120,7 +120,7 @@ All three methods return the `attributes` Hash when successful.
 ### Additional instance methods
 
 {% hint style="success" %}
-`attributes` can be passed in Symbol or String form.
+`attribute` name parameters can be passed as a Symbol or String.
 {% endhint %}
 
 #### ==(comparison\_object)
@@ -300,3 +300,7 @@ def readonly?
   true
 end
 ```
+
+### Internationalization
+
+Same to [Active Record I18n](https://guides.rubyonrails.org/i18n.html#translations-for-active-record-models), the only different is the root of locale YAML is `active_entity` instead of `activerecord`
