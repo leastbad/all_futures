@@ -7,6 +7,8 @@ require "all_futures"
 require "minitest/autorun"
 require "minitest/spec"
 
+Time.zone = "UTC"
+
 # Configure Kredis to allow for testing without Redis in order to avoid exception:
 # NoMethodError: undefined method `config_for' for nil:NilClass
 Kredis.configurator = Class.new {

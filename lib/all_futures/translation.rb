@@ -9,7 +9,7 @@ module AllFutures
       classes = [klass]
       return classes if klass == AllFutures::Base
 
-      while !klass.base_class?
+      until klass.base_class?
         classes << klass = klass.superclass
       end
       classes

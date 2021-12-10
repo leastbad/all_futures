@@ -46,7 +46,7 @@ describe AllFutures::Base do
 
     assert example.destroyed?
 
-    assert_raises(ActiveRecord::RecordNotFound) do
+    assert_raises(AllFutures::RecordNotFound) do
       ExampleModel.find(example.id)
     end
   end
