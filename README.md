@@ -1,6 +1,6 @@
 # AllFutures
 
-Rails developers can use the [all\_futures](https://github.com/leastbad/all\_futures) gem to persist data **across multiple requests**. It leverages Redis to provide an ephemeral model that behaves just like an ActiveRecord model.
+Rails developers can use the [all\_futures](https://github.com/leastbad/all\_futures) gem to persist data **across multiple requests**. It leverages Redis to provide an ephemeral model that you can use just like an ActiveRecord model.
 
 It's perfect for building faceted search interfaces, multi-step forms, real-time input validation and persisting the display state of UI elements.
 

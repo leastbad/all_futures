@@ -1,5 +1,11 @@
 # Readonly
 
+You can use `attr_readonly :title, :author` to prevent assign value to attribute after initialized.
+
+You can use `enable_readonly!` and `disable_readonly!` to control the behavior.
+
+**Important: It's no effect with embeds or array attributes !!!**
+
 #### enable\_attr\_readonly!, disable\_attr\_readonly!
 
 #### attr\_readonly\_enabled?
