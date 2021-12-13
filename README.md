@@ -40,7 +40,10 @@ Yes, AllFutures is for **you**.
 * Easy to learn, quick to implement
 * Supports model attributes with defaults, arrays and associations
 * Per-attribute dirty checking and state management with rollbacks
+* Remembers previous model state across multiple requests
+* Automatic versioning allows time travel views
 * Model validations, errors and associations
+* Can be added as attributes in your Active Record model classes
 * No more temporary database tables that need to be purged later
 
 ## How does AllFutures work?
