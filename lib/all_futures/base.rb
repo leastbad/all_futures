@@ -12,6 +12,7 @@ module AllFutures
     include ::AllFutures::Timestamp
     include ::AllFutures::Versions
     include ::ActiveModel::Conversion
+    include ::ActiveModel::SecurePassword
     include ::ActiveRecord::Integration
     include ::Kredis::Attributes
 
