@@ -61,7 +61,7 @@ end
 
 **`uniqueness_in_active_record` validation**
 
-Active Entity provides `uniqueness_in_active_record` validation to test given `scope` doesn't present in ActiveRecord model.
+Active Entity provides `uniqueness_in_active_record` validation to test given `scope` doesn't present in Active Record model.
 
 The usage same as [uniqueness](https://guides.rubyonrails.org/active\_record\_validations.html#uniqueness) in addition you must give a AR model `class_name`
 

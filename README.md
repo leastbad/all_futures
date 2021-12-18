@@ -1,6 +1,6 @@
 # AllFutures
 
-Rails developers can use the [all\_futures](https://github.com/leastbad/all\_futures) gem to persist data **across multiple requests**. It leverages Redis to provide an ephemeral model that you can use just like an ActiveRecord model.
+Rails developers can use the [all\_futures](https://github.com/leastbad/all\_futures) gem to persist data **across multiple requests**. It leverages Redis to provide an ephemeral model that you can use just like an Active Record model.
 
 It's perfect for building faceted search interfaces, multi-step forms, real-time input validation and persisting the display state of UI elements.
 
@@ -10,7 +10,11 @@ Try a demo, here: 👉 [Beast Mode StimulusReflex](https://beastmode.leastbad.co
 
 ## Why use AllFutures?
 
-Many reactive UI concepts are a pain in the ass to implement using the classic Rails request/response pattern, which was created at a time before developers started using Ajax to update portions of a page. ActionController is designed to mutate state in response to form submissions, leading to abuse of the session object and awkward hacks to validate and persist models across multiple requests.
+Many reactive UI concepts are a pain in the ass to implement using the classic Rails request/response pattern, which was created at a time before developers started using Ajax to update portions of a page. ActionController is amazing, but if a user interaction doesn't fit cleanly into a single form submission, the developer now has to maintain UI state across multiple atomic requests. Naturally, this leads to abuse of the session object and awkward hacks to validate and persist models.
+
+{% hint style="danger" %}
+How do you incrementally save models that require the presence of multiple attributes to be valid? In vanilla Rails, you don't.
+{% endhint %}
 
 The combination of ActionCable and Turbo Drive creates a persistent Connection that blurs the line between session and request, forcing a new mental model that is poorly served by ActionDispatch and the conventions which drove Rails to success... in 2005.
 
@@ -48,7 +52,7 @@ Yes, AllFutures is for **you**.
 
 ## How does AllFutures work?
 
-AllFutures is the fusion of [Active Entity](https://github.com/jasl/activeentity) and [Kredis](https://github.com/rails/kredis). It is similar to using [ActiveModel::Model](https://api.rubyonrails.org/classes/ActiveModel/Model.html), except that it has full support for [Attributes](https://api.rubyonrails.org/classes/ActiveRecord/Attributes/ClassMethods.html#method-i-attribute), including arrays and nested attributes. AllFutures classes behave like ActiveRecord model instances as much as possible.
+AllFutures is the fusion of [Active Entity](https://github.com/jasl/activeentity) and [Kredis](https://github.com/rails/kredis). It is similar to using a **properly juiced** [ActiveModel::Model](https://api.rubyonrails.org/classes/ActiveModel/Model.html), except that it has full support for [Attributes](https://api.rubyonrails.org/classes/ActiveRecord/Attributes/ClassMethods.html#method-i-attribute), including arrays and nested attributes. AllFutures classes behave like Active Record model instances as much as possible.
 
 ```ruby
 class Example < AllFutures::Base
@@ -61,9 +65,9 @@ example.valid? # false
 example.errors # @errors=[#<ActiveModel::Error attribute=name, type=blank, options={}>]
 ```
 
-Unlike an ActiveRecord model, AllFutures instances can persist their attributes even if the attributes are currently invalid. This design allows you to resolve any errors present, even if it takes several distinct operations to do so.
+Unlike an Active Record model, AllFutures instances can persist their attributes even if the attributes are currently invalid. This design allows you to resolve any errors present, even if it takes several distinct operations to do so.
 
-Once the state of your attributes is valid, you can pass the `attributes` from your AllFutures model right into the constructor of a real ActiveRecord model.
+Once the state of your attributes is valid, you can pass the `attributes` from your AllFutures model right into the constructor of a real Active Record model.
 
 {% hint style="danger" %}
 AllFutures v1 persisted the attributes every time you set the value of an attribute using bracket notation. **This behavior has been removed.** An explicit `save` operation is now required to persist changes.
@@ -80,5 +84,5 @@ The three key files are the [CustomerFilter](https://github.com/leastbad/beast\_
 Assuming you're running at least Ruby 2.7.3, Postgres and have Redis running on your system, you can just run `bin/setup` to install it, including migrations and the DB seed file.
 
 {% embed url="https://www.youtube.com/watch?v=Fbo21aWFbhQ" %}
-Did they meet at the gym?
+REFRACT
 {% endembed %}

@@ -1,14 +1,14 @@
 # Usage
 
-Working with AllFutures is intentionally very similar to working with ActiveRecord, and most of the same methods will work. You will create a class and define the scopes, validations, callbacks and instance methods you need.
+Working with AllFutures is intentionally very similar to working with Active Record, and most of the same methods will work. You will create a class and define the scopes, validations, callbacks and instance methods you need.
 
-AllFutures models persist to Redis instead of your relational database. Place AllFutures classes in `app/models`, alongside your ActiveRecord models.
+AllFutures models persist to Redis instead of your relational database. Place AllFutures classes in `app/models`, alongside your Active Record models.
 
 ### Hello World
 
 For this example, we'll use [StimulusReflex](https://stimulusreflex.com) to send updates to the server when the user enters data into either of two text input elements.
 
-The most visible difference between an ActiveRecord model and an AllFutures model is that instead of migrations and a schema, you need to declare your [attributes](https://api.rubyonrails.org/classes/ActiveRecord/Attributes/ClassMethods.html#method-i-attribute) in the class:
+The most visible difference between an Active Record model and an AllFutures model is that instead of migrations and a schema, you need to declare your [attributes](https://api.rubyonrails.org/classes/ActiveRecord/Attributes/ClassMethods.html#method-i-attribute) in the class:
 
 {% code title="app/models/example.rb" %}
 ```ruby
@@ -81,7 +81,9 @@ Example.create # no values set; persisted but no way to access the id
 example_id = Example.create(name: "Bob").id # winning
 ```
 
-Retrieving an instance later just requires passing an `id` to the `find` method:
+`create` is exactly like `new`, except that it has already been persisted to Redis and has an `id` property assigned. **If you need to set your own `id`, it's important to use `new`.**
+
+Retrieving an instance later just requires passing an `id` to the `find` method. Numeric values will be converted to String type for performing the lookup.
 
 ```ruby
 example = Example.find(example_id)
@@ -103,7 +105,7 @@ Both methods return `true` if the operation is successful. If unsuccessful, `sav
 
 #### update(attributes = {}), update!(attributes = {})
 
-This should be familiar to ActiveRecord users, as it accepts a Hash of attributes to persist. Internally, the `save` method will not be called unless there are changes to at least one attribute. If you attempt to pass an invalid attribute, it will raise an `ActiveModel::UnknownAttributeError` exception.
+This should be familiar to Active Record users, as it accepts a Hash of attributes to persist. Internally, the `save` method will not be called unless there are changes to at least one attribute. If you attempt to pass an invalid attribute, it will raise an `ActiveModel::UnknownAttributeError` exception.
 
 Both methods return `true` if the operation is successful. If unsuccessful, `update` will return `false` while `update!` will raise an `ActiveRecord::RecordNotSaved` exception.
 
@@ -144,7 +146,7 @@ Note that it always returns `true` with Boolean attributes.
 Returns an instance of the specified class with the attributes and state of the current record. In addition to attributes, the `changed_attributes`, `new_record?` and `destroyed?` values as well as the `errors` collections are cloned. `id` is **not** transferred.
 
 {% hint style="success" %}
-In many cases, it is sufficient to simply pass the `attributes` Hash to the `new` or `create` method of the ActiveRecord model class that you want to create.
+In many cases, it is sufficient to simply pass the `attributes` Hash to the `new` or `create` method of the Active Record model class that you want to create.
 {% endhint %}
 
 #### decrement(attribute, by = 1), decrement!(attribute, by = 1), increment(attribute, by = 1), increment!(attribute, by = 1)
@@ -209,7 +211,7 @@ Returns an Array of Strings containing the attributes on your AllFutures model i
 
 #### attributes
 
-Returns a Hash of the attributes on your AllFutures model instance, as defined in your model class when you use the [`attribute`](https://api.rubyonrails.org/classes/ActiveRecord/Attributes/ClassMethods.html#method-i-attribute) method. You can pass this Hash to the `new` or `create` method of an ActiveRecord model class.
+Returns a Hash of the attributes on your AllFutures model instance, as defined in your model class when you use the [`attribute`](https://api.rubyonrails.org/classes/ActiveRecord/Attributes/ClassMethods.html#method-i-attribute) method. You can pass this Hash to the `new` or `create` method of an Active Record model class.
 
 The `attributes` Hash will not contain `id`, which is a property.
 
@@ -277,7 +279,7 @@ end
 
 #### to\_partial\_path
 
-ActiveRecord model instances can be passed to Rails' `render` method, and if ActionPack can locate a partial in the correct location based on that model, it will render that partial. `to_partial_path` is responsible for this magic.
+Active Record model instances can be passed to Rails' `render` method, and if ActionPack can locate a partial in the correct location based on that model, it will render that partial. `to_partial_path` is responsible for this magic.
 
 AllFutures models can also be passed to `render`. If you have a `Drafts` model, `to_partial_path` returns `drafts/draft` and ActionPack will look for `app/views/drafts/_draft.html.erb`. If this isn't where the partial for your model is located, define your own:
 
