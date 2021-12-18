@@ -1,6 +1,6 @@
 # Associations
 
-Active Entity supports its own variant of nested attributes via the `embeds_one` / `embeds_many` macros. The intention is to be mostly compatible with ActiveRecord's `accepts_nested_attributes_for` functionality.
+Active Entity supports its own variant of nested attributes via the `embeds_one` / `embeds_many` macros. The intention is to be mostly compatible with Active Record's `accepts_nested_attributes_for` functionality.
 
 ```ruby
 class Holiday < ActiveEntity::Base
