@@ -57,9 +57,66 @@ The precision represents the total number of digits in the number, whereas scale
 
 ### Enums
 
-[https://api.rubyonrails.org/v5.2.2/classes/ActiveRecord/Enum.html](https://api.rubyonrails.org/v5.2.2/classes/ActiveRecord/Enum.html)
+You can use the `enum` class method to define a set of possible values for an attribute. It is similar to the `enum` functionality in Active Model, but has significant enough quirks that you should think of them as distinct.
+
+```ruby
+class Example < AllFutures::Base
+  attribute :steve, :integer
+  enum steve: [:martin, :carell, :buscemi]
+end
+
+example = Example.new
+example.attributes # => {"steve"=>nil}
+example.steve = :carell
+example.carell? # => true
+example.attributes # => {"steve"=>"carell"}
+example.steve = 2
+example.attributes # => {"steve"=>"buscemi"}
+example.martin! # => {"steve"=>"martin"} (attributes saved to Redis)
+example.steve = :bannon # ArgumentError ('bannon' is not a valid steve)
+```
+
+The first thing you'll notice about the `:steve` attribute is that it is an "Integer", even though it might seem logical to define it as a String... TL;DR: **don't do this**. Even though the attribute is ultimately stored in Redis as a String, internally `enum` tracks the possible values based on their index position in the array. It's also possible to provide a Hash of possible values:
+
+```ruby
+class Example < AllFutures::Base
+  attribute :steve, :integer, default: 9
+  enum steve: {martin: 5, carell: 12, buscemi: 9}
+end
+
+example = Example.new
+example.attributes # => {"steve"=>"buscemi"}
+```
+
+The other quirk of this implementation is that you must create your `attribute` **before** you call `enum`.
+
+`enum` does not create the search scopes that might be familar to Active Model users, since there is no search or `where` concept in AllFutures. You can, however, access the mapping directly to obtain the index number for a given value:
+
+```ruby
+Example.steves[:buscemi] # => 9
+```
+
+You can define prefixes and suffixes for your enum attributes. Note the underscores:
+
+```ruby
+class Conversation < AllFutures::Base
+  attribute :status, :integer
+  attribute :comments_status, :integer
+  enum status: [ :active, :archived ], _suffix: true
+  enum comments_status: [ :active, :inactive ], _prefix: :comments
+end
+
+conversation = Conversation.new
+conversation.active_status!
+conversation.archived_status? # => false
+
+conversation.comments_inactive!
+conversation.comments_active? # => false
+```
 
 ### Kredis attributes
+
+![](../.gitbook/assets/kredis.jpg)
 
 Kredis attributes can be used in an AllFutures model in the exact same way they are used in Active Record models. The format follows a predictable pattern: `kredis_datatype`:
 
