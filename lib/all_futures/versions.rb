@@ -14,6 +14,10 @@ module AllFutures
       def inspect
         attributes
       end
+
+      def reject
+        attributes
+      end
     end
 
     included do

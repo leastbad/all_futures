@@ -111,6 +111,10 @@ module AllFutures
       attributes
     end
 
+    def reject
+      attributes
+    end
+
     private
 
     def _raise_unknown_attribute_error(attribute)
