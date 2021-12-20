@@ -3,7 +3,7 @@
 * [AllFutures](README.md)
 * [Setup](setup.md)
 * [Usage](usage/README.md)
-  * [Active Record Integration](usage/active-record-integration.md)
+  * [Active Record](usage/active-record.md)
   * [Attributes](usage/attributes.md)
   * [Associations](usage/associations.md)
   * [Aggressions](usage/aggressions.md)
