@@ -18,7 +18,7 @@ module AllFutures
               record_id = try(:id) or raise AllFutures::ParentModelNotSavedYet, "AllFutures requires a unique key. Either save the parent model before accessing #{name}, or pass a custom key."
               "#{self.class.name.tableize.tr("/", ":")}:#{record_id}:#{name}"
             end
-            af = klass.exists?(af_key) ? klass.find(af_key) : klass.create(id: af_key)
+            af = klass.exists?(af_key) ? klass.find(af_key) : klass.new(id: af_key)
             instance_variable_set(ivar_symbol, af)
           end
         end
