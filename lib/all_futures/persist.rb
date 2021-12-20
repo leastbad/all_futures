@@ -4,18 +4,6 @@ module AllFutures
   class RecordNotSaved < StandardError; end
 
   module Persist
-    def becomes(klass)
-      became = klass.allocate
-      became.send :initialize
-      became.instance_variable_set "@attributes", attributes
-      became.instance_variable_set "@mutations_from_database", nil
-      became.instance_variable_set "@changed_attributes", changed_attributes
-      became.instance_variable_set "@new_record", new_record?
-      became.instance_variable_set "@destroyed", destroyed?
-      became.errors.copy! errors
-      became
-    end
-
     def decrement(attribute, by = 1)
       increment attribute, -by
     end
