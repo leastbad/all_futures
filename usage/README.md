@@ -141,14 +141,6 @@ Returns `true` if the specified attribute has been set by the user or by a Redis
 
 Note that it always returns `true` with Boolean attributes.
 
-#### becomes(ActiveRecord::Base)
-
-Returns an instance of the specified class with the attributes and state of the current record. In addition to attributes, the `changed_attributes`, `new_record?` and `destroyed?` values as well as the `errors` collections are cloned. `id` is **not** transferred.
-
-{% hint style="success" %}
-In many cases, it is sufficient to simply pass the `attributes` Hash to the `new` or `create` method of the Active Record model class that you want to create.
-{% endhint %}
-
 #### decrement(attribute, by = 1), decrement!(attribute, by = 1), increment(attribute, by = 1), increment!(attribute, by = 1)
 
 Increase or decrease an Integer attribute by 1, or any number you provide as an optional second parameter. `decrement` and `increment` work without writing to Redis, while `decrement!` and `increment!` both commit all outstanding changes.
@@ -302,6 +294,15 @@ def readonly?
   true
 end
 ```
+
+### Reserved words
+
+A likely-incomplete list of attribute/method names that you shouldn't use as attributes:
+
+* id
+* created\_at
+* updated\_at
+* reject
 
 ### Internationalization
 
