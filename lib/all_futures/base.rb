@@ -19,13 +19,10 @@ module AllFutures
     attr_reader :created_at, :updated_at
 
     def initialize(attributes = {})
-      # `active_entity/inheritance.rb:49` defaults `attributes` to `nil`, and our method signature has no effect
       attributes ||= {}
-
       attributes = attributes.attributes.transform_keys(&:to_sym) if attributes.is_a?(ActiveRecord::Base)
-
-      # in order to avoid FrozenError: can't modify id when persisted in `id=`
       attributes_for_super = attributes.key?(:id) ? attributes.except(:id).except(:created_at).except(:updated_at) : attributes
+
       super(attributes_for_super) do
         @id = attributes&.fetch(:id, nil) || SecureRandom.uuid
         @created_at = Time.current
