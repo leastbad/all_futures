@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AllFutures::Railtie < ::Rails::Railtie
   initializer "all_futures.attributes" do
     config.after_initialize do
