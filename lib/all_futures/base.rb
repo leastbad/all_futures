@@ -9,6 +9,7 @@ module AllFutures
     extend ::AllFutures::Translation
     include ::AllFutures::Persist
     include ::AllFutures::Dirty
+    include ::AllFutures::Validations
     include ::AllFutures::Timestamp
     include ::AllFutures::Versions
     include ::ActiveModel::Conversion
@@ -38,6 +39,7 @@ module AllFutures
 
         @attributes.keys.each do |attr|
           define_singleton_method("#{attr}_changed?") { attribute_changed?(attr) }
+          define_singleton_method("#{attr}_valid?") { attribute_valid?(attr) }
           define_singleton_method("rollback_#{attr}") { rollback_attribute(attr) }
           define_singleton_method("rollback_#{attr}!") { rollback_attribute!(attr) }
           define_singleton_method("restore_#{attr}") { restore_attribute(attr) }
