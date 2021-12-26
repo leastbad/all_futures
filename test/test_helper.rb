@@ -6,6 +6,7 @@ require "bundler/setup"
 require "all_futures"
 require "minitest/autorun"
 require "minitest/spec"
+require "active_record"
 
 Time.zone = "UTC"
 
