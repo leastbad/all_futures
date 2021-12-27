@@ -141,6 +141,12 @@ Returns `true` if the specified attribute has been set by the user or by a Redis
 
 Note that it always returns `true` with Boolean attributes.
 
+#### attribute\_valid?(attribute), ATTR\_valid?
+
+Just like calling `valid?`, but for one attribute. Returns `true` if the specified attribute passes all validation helpers.
+
+Also available as a dynamic method (created for every attribute in your model).
+
 #### decrement(attribute, by = 1), decrement!(attribute, by = 1), increment(attribute, by = 1), increment!(attribute, by = 1)
 
 Increase or decrease an Integer attribute by 1, or any number you provide as an optional second parameter. `decrement` and `increment` work without writing to Redis, while `decrement!` and `increment!` both commit all outstanding changes.

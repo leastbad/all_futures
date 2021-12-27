@@ -83,3 +83,25 @@ If your AllFutures model has attributes that your Active Record model does not, 
 ### Cache Keys
 
 AllFutures models maintain an internal `@updated_at` accessor so that they can be used as cache keys and invalidate themselves when appropriate.
+
+### Excluding attributes
+
+You might encounter scenarios where you have models that are close to identical but might have additional attributes. This will cause issues if you attempt to pass the `attributes` of the superset model into the constructor of the subset.
+
+This can be remedied by excluding the attributes you don't want to pass:
+
+```ruby
+Post.create PostDraft.find(3).attributes.except("attribute1", "attribute2")
+```
+
+If you find that you're accessing this subset of attributes often, you could create a method on your model to DRY up your code:
+
+```ruby
+def without_attrs
+  attributes.except("attribute1", "attribute2")
+end
+```
+
+{% hint style="info" %}
+Remember to use String-based keys when accessing items in your `attributes` collection.
+{% endhint %}
