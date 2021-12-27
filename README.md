@@ -73,6 +73,20 @@ Once the state of your attributes is valid, you can pass the `attributes` from y
 AllFutures v1 persisted the attributes every time you set the value of an attribute using bracket notation. **This behavior has been removed.** An explicit `save` operation is now required to persist changes.
 {% endhint %}
 
+## Who makes this?
+
+First, AllFutures wouldn't exist without [Active Entity](https://github.com/jasl/activeentity) and [Kredis](https://github.com/rails/kredis). Thank you, [Jun Jiang](https://twitter.com/jasl9187) and [Kasper Timm Hansen](https://twitter.com/kaspth).
+
+AllFutures was originally created by leastbad, who continues to serve as the primary developer and writer of words. :wave:
+
+v2 welcomes pivotal contributions from key members of the [StimulusReflex](https://stimulusreflex.com) core and moderation teams. [Stephen Margheim](https://twitter.com/fractaledmind) heroically made sure that callbacks work as expected, _twice_. [Julian Rubisch](https://twitter.com/julian\_rubisch) is the reason AllFutures models are basically interoperable with Active Record models.
+
+Finally, thanks to [Nate Hopkins](https://twitter.com/hopsoft/) and [Konnor Rogers](https://twitter.com/rogerskonnor/) for their feedback and suggestions.
+
+We realized that this library needed to exist and had a deep understanding of how it should work _only_ because we have spent years helping thousands of Rails developers figure out the right way to develop reactive UIs.
+
+AllFutures truly was born in fire. :fire:
+
 ## Try it now
 
 You can experiment with [Beast Mode StimulusReflex](https://beastmode.leastbad.com), a live demonstration of using AllFutures to drill down into a tabular dataset, [**right now**](https://beastmode.leastbad.com). 👈

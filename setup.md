@@ -8,6 +8,8 @@ gem "all_futures", "~> 2.0"
 
 AllFutures relies on Redis via the `kredis` gem. Make sure that you have a Redis server running and that you have followed the [Kredis installation instructions](https://github.com/rails/kredis#installation) to set up your `config/redis/shared.yml`.
 
+Thankfully, Rails 7 now ships with Kredis installed, which means you should be able to use AllFutures going forward. Note that **Kredis requires Ruby 2.7 or above**.
+
 ## Redis Cache Eviction Policy
 
 AllFutures is designed to create Redis keys on an as-needed basis. No attempt is made to clear keys, as there is an expectation that you will set an [eviction policy](https://docs.redislabs.com/latest/rs/administering/database-operations/eviction-policy/) which will remove old keys to make room for new ones.
