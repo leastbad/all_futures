@@ -1,4 +1,4 @@
-# Validations and Errors
+# Validations
 
 One of the original Rails features that drew many to the framework was its powerful business rule validation system for Active Record. Controller actions that call `save` and use the return value to drive application behaviour are an enduring part of what makes Rails...Rails.
 
@@ -140,41 +140,54 @@ class Order < AllFutures::Base
 end
 ```
 
-It's possible to define [groups of validations](validations-and-errors.md#validations-101) that are only applied if a condition is met e.g. if the `is_author` Boolean attribute is `true`:
+It's possible to define [groups of validations](validations.md#validations-101) that are only applied if a condition is met e.g. if the `is_author` Boolean attribute is `true`:
 
 ```ruby
 class DraftPost < AllFutures::Base
-  with_options if: :is_author? do |author|
-    author.validates :title, presence: true
-    author.validates :body, length: { minimum: 10 }
+  with_options if: :is_author? do
+    validates :title, presence: true
+    validates :body, length: { minimum: 10 }
   end
 end
 
 ```
 
-You can even construct unholy mashups of all these techniques, using `:if` and `:unless` [in combination](https://guides.rubyonrails.org/active\_record\_validations.html#combining-validation-conditions).
+You can even construct unholy mashups of all these techniques, using `:if` and `:unless` [in combination](https://guides.rubyonrails.org/active\_record\_validations.html#combining-validation-conditions). There's a "great" example in the Rails Guide:
 
-Unfortunately, the code required to use conditional validation logic in a complex scenario quickly becomes **brittle** and **difficult to maintain**. AllFutures _supports_ Active Record's conditional mechanisms for compatibility, but you are strongly encouraged to adopt a new approach.
+```ruby
+class Computer < ApplicationRecord
+  validates :mouse, presence: true,
+                    if: [Proc.new { |c| c.market.retail? }, :desktop?],
+                    unless: Proc.new { |c| c.trackpad.present? }
+end
+
+```
+
+Unfortunately, the code required to use conditional validation logic in a complex scenario quickly becomes **brittle** and **difficult to maintain**. AllFutures _supports_ Active Record's conditional mechanisms for compatibility, but you are strongly encouraged to consider a new approach...
 
 ### The AllFutures way
 
-Cooking shows would be really boring (and short) if all of the recipes were ready to go into the oven at the beginning of the episode. You trust that the ultimate application of heat will be successful, but you watch the chef because the important parts are all in the middle.
+Cooking shows would be really boring (and short) if all of the recipes were ready to go into the oven at the beginning of the episode. We trust that the ultimate application of heat will be successful, but watch the chef because the important parts are all in the middle.
 
 Active Record wants fully assembled dishes that are ready to go into the oven. AllFutures is all about how you slice the onions and blend the sauces.
+
+{% embed url="https://www.youtube.com/watch?v=HgG_b9L7dwo" %}
+I'm not really familiar with mustard in my Russian
+{% endembed %}
 
 The key design difference that sets AllFutures apart from Active Record is that a model instance does not have to be valid to be persisted to Redis.
 
 This means that it's perfectly okay for you to work iteratively, tweaking attributes and providing an infrastructure upon which a reactive UI can be quickly built.
 
-**AllFutures sits in front of Active Record like a firewall, meaning that it can take over much of the complexity that would otherwise demand conditional validations in the first place.**
+**AllFutures sits in front of Active Record like a firewall, meaning that it can remove much of the complexity that led to conditional validations in the first place.**
 
-While you should still have validations in place to ensure the integrity of your data, the participation of AllFutures in your data flow means that you can pass Active Record data that's already going to be valid outside of \[literally] exceptional cases.
+While you should still have validations in place to ensure the integrity of your Active Record model, having AllFutures in your pipeline means that you'll be passing data to Active Record that's already valid, outside of \[literally] exceptional cases.
 
-You will reduce the overall complexity of your Active Record model classes, because they can now be responsible for \*persistence\*, while handing off tracking the \*workflow\* of your business objects.
+You will reduce the overall complexity of your Active Record model classes, which can now focus on persistence, while delegating the workflow of your business objects to AllFutures.
 
-How cool is that?!
+How cool is that?
 
-When AllFutures is in town, conditional Active Record validations start to seem like a smell.
+When AllFutures is in the kitchen, conditional Active Record validations can go in the compost.
 
 ### Programmatic validations
 

@@ -11,7 +11,7 @@
   * [Dirty](usage/dirty.md)
   * [Errors](usage/errors.md)
   * [Readonly](usage/readonly.md)
-  * [Validations and Errors](usage/validations-and-errors.md)
+  * [Validations](usage/validations.md)
   * [Versioning](usage/versioning.md)
 * [Examples](examples/README.md)
   * [Faceted Search](examples/faceted-search.md)
