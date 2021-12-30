@@ -4,3 +4,4 @@ source "https://rubygems.org"
 
 # Specify your gem's dependencies in all_futures.gemspec
 gemspec
+gem "activeentity", github: "jasl/activeentity", branch: "master"

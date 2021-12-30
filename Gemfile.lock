@@ -1,8 +1,16 @@
+GIT
+  remote: https://github.com/jasl/activeentity.git
+  revision: 662d97ae96ab4c6393c1ac96edad7ef66f075d86
+  branch: master
+  specs:
+    activeentity (6.3.0)
+      activemodel (>= 6.0, < 8)
+      activesupport (>= 6.0, < 8)
+
 PATH
   remote: .
   specs:
     all_futures (1.0.3)
-      activeentity (~> 6.1)
       activemodel (>= 4.0)
       activerecord (>= 4.0)
       activesupport (>= 4.0)
@@ -11,28 +19,25 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    actionpack (6.1.4.1)
-      actionview (= 6.1.4.1)
-      activesupport (= 6.1.4.1)
+    actionpack (6.1.4.4)
+      actionview (= 6.1.4.4)
+      activesupport (= 6.1.4.4)
       rack (~> 2.0, >= 2.0.9)
       rack-test (>= 0.6.3)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.0, >= 1.2.0)
-    actionview (6.1.4.1)
-      activesupport (= 6.1.4.1)
+    actionview (6.1.4.4)
+      activesupport (= 6.1.4.4)
       builder (~> 3.1)
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.1, >= 1.2.0)
-    activeentity (6.1.1)
-      activemodel (~> 6.0, < 7.0)
-      activesupport (~> 6.0, < 7.0)
-    activemodel (6.1.4.1)
-      activesupport (= 6.1.4.1)
-    activerecord (6.1.4.1)
-      activemodel (= 6.1.4.1)
-      activesupport (= 6.1.4.1)
-    activesupport (6.1.4.1)
+    activemodel (6.1.4.4)
+      activesupport (= 6.1.4.4)
+    activerecord (6.1.4.4)
+      activemodel (= 6.1.4.4)
+      activesupport (= 6.1.4.4)
+    activesupport (6.1.4.4)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
@@ -50,20 +55,16 @@ GEM
     kredis (1.0.1)
       activesupport (>= 6.0.0)
       redis (~> 4.2)
-    loofah (2.12.0)
+    loofah (2.13.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     magic_frozen_string_literal (1.2.0)
     method_source (1.0.0)
-    minitest (5.14.4)
-    nokogiri (1.12.5-arm64-darwin)
-      racc (~> 1.4)
-    nokogiri (1.12.5-x86_64-darwin)
-      racc (~> 1.4)
+    minitest (5.15.0)
     nokogiri (1.12.5-x86_64-linux)
       racc (~> 1.4)
     parallel (1.21.0)
-    parser (3.0.3.0)
+    parser (3.0.3.2)
       ast (~> 2.4.1)
     pry (0.13.1)
       coderay (~> 1.1)
@@ -77,18 +78,18 @@ GEM
       nokogiri (>= 1.6)
     rails-html-sanitizer (1.4.2)
       loofah (~> 2.3)
-    railties (6.1.4.1)
-      actionpack (= 6.1.4.1)
-      activesupport (= 6.1.4.1)
+    railties (6.1.4.4)
+      actionpack (= 6.1.4.4)
+      activesupport (= 6.1.4.4)
       method_source
       rake (>= 0.13)
       thor (~> 1.0)
     rainbow (3.0.0)
     rake (13.0.6)
     redis (4.5.1)
-    regexp_parser (2.1.1)
+    regexp_parser (2.2.0)
     rexml (3.2.5)
-    rubocop (1.22.3)
+    rubocop (1.23.0)
       parallel (~> 1.10)
       parser (>= 3.0.0.0)
       rainbow (>= 2.2.2, < 4.0)
@@ -97,9 +98,9 @@ GEM
       rubocop-ast (>= 1.12.0, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 3.0)
-    rubocop-ast (1.13.0)
+    rubocop-ast (1.15.0)
       parser (>= 3.0.1.1)
-    rubocop-performance (1.11.5)
+    rubocop-performance (1.12.0)
       rubocop (>= 1.7.0, < 2.0)
       rubocop-ast (>= 0.4.0)
     ruby-progressbar (1.11.0)
@@ -107,9 +108,9 @@ GEM
       byebug (>= 9.1, < 12.0)
       pry (~> 0.13.0)
       tty-screen (~> 0.8.1)
-    standard (1.4.0)
-      rubocop (= 1.22.3)
-      rubocop-performance (= 1.11.5)
+    standard (1.5.0)
+      rubocop (= 1.23.0)
+      rubocop-performance (= 1.12.0)
     standardrb (1.0.0)
       standard
     thor (1.1.0)
@@ -120,12 +121,10 @@ GEM
     zeitwerk (2.5.1)
 
 PLATFORMS
-  arm64-darwin-21
-  x86_64-darwin-19
   x86_64-linux
 
 DEPENDENCIES
-  activerecord (>= 4.0)
+  activeentity!
   all_futures!
   magic_frozen_string_literal (~> 1.2.0)
   railties (>= 4.0)
@@ -134,4 +133,4 @@ DEPENDENCIES
   standardrb (~> 1.0)
 
 BUNDLED WITH
-   2.2.31
+   2.2.32
