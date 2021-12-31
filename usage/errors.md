@@ -70,15 +70,15 @@ Pass a Symbol to `messages_for(:attribute)` or `full_messages_for(:attribute)` t
 You can also access the `ActiveModel::Error` instances using the [`where`](https://api.rubyonrails.org/v7.0.0/classes/ActiveModel/Errors.html#method-i-where) method:
 
 ```ruby
-where(:name) # => all name errors.
-where(:name, :too_short) # => all name errors being too short
-where(:name, :too_short, minimum: 2) # => all name errors being too short and minimum is 2
+where(:name) # all name errors
+where(:name, :too_short) # all name errors being too short
+where(:name, :too_short, minimum: 2) # all name errors being too short and minimum is 2
 ```
 
 To get the first `full_message` error for `:name` you would do something like this:
 
 ```ruby
-record.errors.where(:name).first.full_message # "Name can't be blank"
+record.errors.where(:name).first.full_message # => "Name can't be blank"
 ```
 
 ### Acting on specific errors
