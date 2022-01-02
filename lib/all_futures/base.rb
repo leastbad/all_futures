@@ -53,15 +53,25 @@ module AllFutures
         new(attributes).tap { |record| record.save }
       end
 
-      def find(id)
-        raise ActiveRecord::RecordNotFound.new("Couldn't find #{name} without an ID") unless id
-        record = load_model(id)
-        model = new record["attributes"].merge(id: id)
-        load_versions(model, record)
-        set_previous_attributes(model, record)
-        model.instance_variable_set "@created_at", Time.zone.parse(record["created_at"])
-        model.instance_variable_set "@updated_at", Time.zone.parse(record["updated_at"])
-        model
+      def find(*ids)
+        raise ActiveRecord::RecordNotFound.new("Couldn't find #{name} without an id") unless ids.flatten.present?
+        if ids.size == 1 && [String, Integer, Symbol].include?(ids.first.class)
+          record = load_model(ids.first)
+          model = new record["attributes"].merge(id: ids.first)
+          load_versions(model, record)
+          set_previous_attributes(model, record)
+          model.instance_variable_set "@created_at", Time.zone.parse(record["created_at"])
+          model.instance_variable_set "@updated_at", Time.zone.parse(record["updated_at"])
+          model
+        else
+          results = ids.flatten.map do |id|
+            find(id)
+          rescue AllFutures::RecordNotFound
+            nil
+          end
+          return results if results.size == results.compact.size
+          raise AllFutures::RecordNotFound.new("Couldn't find all #{name.pluralize} with ids: #{ids.flatten.join(", ")} (found #{results.compact.size} results, but was looking for #{results.size})")
+        end
       end
 
       def exists?(id)
@@ -76,7 +86,7 @@ module AllFutures
 
       def load_model(id)
         record = Kredis.json("#{name}:#{id}").value
-        raise AllFutures::RecordNotFound.new("Couldn't find #{name} with ID #{id}") unless record
+        raise AllFutures::RecordNotFound.new("Couldn't find #{name} with id #{id}") unless record
         record
       end
 
@@ -98,6 +108,7 @@ module AllFutures
     def id=(value)
       raise FrozenError.new("can't modify id when persisted") unless new_record?
       @id = value.to_s
+      @redis_key = "#{self.class.name}:#{@id}"
     end
 
     def to_dom_id
