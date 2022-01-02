@@ -49,6 +49,14 @@ module AllFutures
     end
 
     class << self
+      def all
+        Kredis.redis.scan_each(match: "#{name}:*").map { |key| find(key.delete_prefix("#{name}:")) }
+      end
+
+      def any?
+        all.any?
+      end
+
       def create(attributes = {})
         new(attributes).tap { |record| record.save }
       end
