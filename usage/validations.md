@@ -6,7 +6,7 @@ However, there is some rigidity in the approach Rails uses to test for model val
 
 Let's say that you want to incrementally build a model by pushing updates every time the user changes a form input value. Perhaps you don't even have a traditional "submit" button! If your Active Record model has multiple mandatory attributes, it's not currently possible to do reactive validation on a per-attribute basis. Pushing an interim update to Mandatory Attribute A would immediately raise a presence validation error from Mandatory Attribute B.
 
-AllFutures makes incremental model creation and validation easy.
+All Futures makes incremental model creation and validation easy.
 
 ### Validations 101
 
@@ -14,7 +14,7 @@ Active Record models cannot be saved unless they are in a valid state. `save` op
 
 What's interesting about the Active Record's design is that `valid?` is not just some getter that queries an internal state variable; it's actually the method that performs the validations process! If you inspect your model instance before `valid?` is called, you'll notice that the `errors` collection will be empty even if the model has values that would fail validation.
 
-**AllFutures does not call `valid?` before saving.** Instead, `valid?` is a tool that you can call _when you need it_, and it is not tied to the persistance layer in any way. :zap:
+**All Futures does not call `valid?` before saving.** Instead, `valid?` is a tool that you can call _when you need it_, and it is not tied to the persistance layer in any way. :zap:
 
 {% hint style="success" %}
 `validate` is aliased to `valid?` and might be grammatically satisfying in some contexts.
@@ -22,13 +22,13 @@ What's interesting about the Active Record's design is that `valid?` is not just
 
 ### Implementing validations
 
-The AllFutures validations are really just [Active Entity validations](https://github.com/jasl/activeentity/#validations), which means that [Jun Jiang](https://twitter.com/jasl9187) did all of the hard work. I am including a slightly edited copy of his instructions here for convenience.
+The All Futures validations are really just [Active Entity validations](https://github.com/jasl/activeentity/#validations), which means that [Jun Jiang](https://twitter.com/jasl9187) did all of the hard work. I am including a slightly edited copy of his instructions here for convenience.
 
 {% hint style="success" %}
-AllFutures (and Active Entity) support many 3rd-party Active Model extensions, such as [adzap/validates\_timeliness](https://github.com/adzap/validates\_timeliness).
+All Futures (and Active Entity) support many 3rd-party Active Model extensions, such as [adzap/validates\_timeliness](https://github.com/adzap/validates\_timeliness).
 {% endhint %}
 
-Defining AllFutures validations works just like it does in an Active Record model:
+Defining All Futures validations works just like it does in an Active Record model:
 
 ```ruby
 class Book < AllFutures::Base
@@ -64,13 +64,13 @@ validates :title, presence: {strict: true}
 
 You can also include your own [custom validator classes](https://guides.rubyonrails.org/active\_record\_validations.html#custom-validators), and call [custom validator methods](https://guides.rubyonrails.org/active\_record\_validations.html#custom-methods) with the `validates` method.
 
-### AllFutures validations
+### All Futures validations
 
-AllFutures also provides several validator methods, courtesy of Active Entity:
+All Futures also provides several validator methods, courtesy of Active Entity:
 
 **`subset` validation**
 
-AllFutures supports array attributes, so you may want to ensure that the elements of an array attribute are included in a given set.
+All Futures supports array attributes, so you may want to ensure that the elements of an array attribute are included in a given set.
 
 The `subset` validation has syntax similar to `inclusion` or `exclusion`:
 
@@ -108,7 +108,7 @@ end
 
 **`uniqueness_in_active_record` validation**
 
-The `uniqueness_in_active_record` validation is AllFutures' answer to Active Record's [uniqueness](https://guides.rubyonrails.org/active\_record\_validations.html#uniqueness) validation. It will perform a query against a `scope` to ensure that the attribute value is not already present in your relational datastore.
+The `uniqueness_in_active_record` validation is All Futures' answer to Active Record's [uniqueness](https://guides.rubyonrails.org/active\_record\_validations.html#uniqueness) validation. It will perform a query against a `scope` to ensure that the attribute value is not already present in your relational datastore.
 
 In addition to the standard `uniqueness` options, you are required to specify an Active Record model `class_name` for it to perform the query.
 
@@ -163,9 +163,9 @@ end
 
 ```
 
-Unfortunately, the code required to use conditional validation logic in a complex scenario quickly becomes **brittle** and **difficult to maintain**. AllFutures _supports_ Active Record's conditional mechanisms for compatibility, but you are strongly encouraged to consider a new approach...
+Unfortunately, the code required to use conditional validation logic in a complex scenario quickly becomes **brittle** and **difficult to maintain**. All Futures _supports_ Active Record's conditional mechanisms for compatibility, but you are strongly encouraged to consider a new approach...
 
-### The AllFutures way
+### The All Futures way
 
 Cooking shows would be really boring (and short) if all of the recipes were ready to go into the oven at the beginning of the episode. We trust that the ultimate application of heat will be successful, but watch the chef because the important parts are all in the middle.
 
@@ -175,23 +175,23 @@ Active Record wants fully assembled dishes that are ready to go into the oven. A
 I'm not really familiar with mustard in my Russian
 {% endembed %}
 
-The key design difference that sets AllFutures apart from Active Record is that a model instance does not have to be valid to be persisted to Redis.
+The key design difference that sets All Futures apart from Active Record is that a model instance does not have to be valid to be persisted to Redis.
 
 This means that it's perfectly okay for you to work iteratively, tweaking attributes and providing an infrastructure upon which a reactive UI can be quickly built.
 
-**AllFutures sits in front of Active Record like a firewall, meaning that it can remove much of the complexity that led to conditional validations in the first place.**
+**All Futures sits in front of Active Record like a firewall, meaning that it can remove much of the complexity that led to conditional validations in the first place.**
 
-While you should still have validations in place to ensure the integrity of your Active Record model, having AllFutures in your pipeline means that you'll be passing data to Active Record that's already valid, outside of \[literally] exceptional cases.
+While you should still have validations in place to ensure the integrity of your Active Record model, having All Futures in your pipeline means that you'll be passing data to Active Record that's already valid, outside of \[literally] exceptional cases.
 
-You will reduce the overall complexity of your Active Record model classes, which can now focus on persistence, while delegating the workflow of your business objects to AllFutures.
+You will reduce the overall complexity of your Active Record model classes, which can now focus on persistence, while delegating the workflow of your business objects to All Futures.
 
 How cool is that?
 
-When AllFutures is in the kitchen, conditional Active Record validations can go in the compost.
+When All Futures is in the kitchen, conditional Active Record validations can go in the compost.
 
 ### Programmatic validations
 
-AllFutures adds the ability to see if a single given attribute is currently valid. **This is exceptionally useful for building reactive interfaces.** :bulb:
+All Futures adds the ability to see if a single given attribute is currently valid. **This is exceptionally useful for building reactive interfaces.** :bulb:
 
 Note that any errors on the `:base` have no impact individual attribute validity.
 
@@ -215,9 +215,9 @@ PostDraft.validators_on :name
 
 ### Sharing validations with Active Record
 
-Hopefully, it's self-evident that defining the same validations on both AllFutures and Active Record models would be repetitive today and a maintenance burden tomorrow. Instead, create a Concern that you can include in both models.
+Hopefully, it's self-evident that defining the same validations on both All Futures and Active Record models would be repetitive today and a maintenance burden tomorrow. Instead, create a Concern that you can include in both models.
 
-Let's create a `Postable` Concern that we can use in our `Post` Active Record model and our `PostDraft` AllFutures model:
+Let's create a `Postable` Concern that we can use in our `Post` Active Record model and our `PostDraft` All Futures model:
 
 {% code title="app/models/concerns/postable.rb" %}
 ```ruby

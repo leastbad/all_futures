@@ -1,10 +1,10 @@
 # Attributes
 
-AllFutures stands on the shoulders of two giants, [Active Entity](https://github.com/jasl/activeentity) and [Kredis](https://github.com/rails/kredis).
+All Futures stands on the shoulders of two giants, [Active Entity](https://github.com/jasl/activeentity) and [Kredis](https://github.com/rails/kredis).
 
-Active Entity presents a "virtual model" that is backed by [Redis](https://redis.io) instead of a relational database. By implementing [Active Model](https://guides.rubyonrails.org/active\_model\_basics.html), an AllFutures model should be useful everywhere that you might usually use an Active Record model in your Rails app.
+Active Entity presents a "virtual model" that is backed by [Redis](https://redis.io) instead of a relational database. By implementing [Active Model](https://guides.rubyonrails.org/active\_model\_basics.html), an All Futures model should be useful everywhere that you might usually use an Active Record model in your Rails app.
 
-Instead of creating migrations, AllFutures model attributes are declared in the class using the `attribute` method. At minimum, you must specify a Symbol parameter for the name.
+Instead of creating migrations, All Futures model attributes are declared in the class using the `attribute` method. At minimum, you must specify a Symbol parameter for the name.
 
 You can specify attributes with the following types: `:string`, `:text`, `:integer`, `:float`, `:decimal`, `:datetime`, `:date`, `:time`, and `:boolean`.
 
@@ -90,7 +90,7 @@ example.attributes # => {"steve"=>"buscemi"}
 
 The other quirk of this implementation is that you must create your `attribute` **before** you call `enum`.
 
-`enum` does not create the search scopes that might be familar to Active Model users, since there is no search or `where` concept in AllFutures. You can, however, access the mapping directly to obtain the index number for a given value:
+`enum` does not create the search scopes that might be familar to Active Model users, since there is no search or `where` concept in All Futures. You can, however, access the mapping directly to obtain the index number for a given value:
 
 ```ruby
 Example.steves[:buscemi] # => 9
@@ -118,7 +118,7 @@ conversation.comments_active? # => false
 
 ![](../.gitbook/assets/kredis.jpg)
 
-Kredis attributes can be used in an AllFutures model in the exact same way they are used in Active Record models. The format follows a predictable pattern: `kredis_datatype`:
+Kredis attributes can be used in an All Futures model in the exact same way they are used in Active Record models. The format follows a predictable pattern: `kredis_datatype`:
 
 ```ruby
 class Example < AllFutures::Base
@@ -137,14 +137,14 @@ example.foo.value = "baz"
 ```
 
 {% hint style="warning" %}
-All instances of your AllFutures model will **share** the same Kredis attribute values. Advanced users can experiment with using a Proc to pass a unique value when the class is instantiated.
+All instances of your All Futures model will **share** the same Kredis attribute values. Advanced users can experiment with using a Proc to pass a unique value when the class is instantiated.
 {% endhint %}
 
-It's important to remember that Kredis attributes are **not** tracked as AllFutures attributes, and they are stored in entirely different Redis keys.
+It's important to remember that Kredis attributes are **not** tracked as All Futures attributes, and they are stored in entirely different Redis keys.
 
 ### Secure Passwords
 
-AllFutures models can store and authenticate [secure passwords](https://guides.rubyonrails.org/active\_model\_basics.html#securepassword). You store the digest value in an attribute instead of using `attr_accessor`.
+All Futures models can store and authenticate [secure passwords](https://guides.rubyonrails.org/active\_model\_basics.html#securepassword). You store the digest value in an attribute instead of using `attr_accessor`.
 
 ```ruby
 class Example < AllFutures::Base

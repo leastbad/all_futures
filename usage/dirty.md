@@ -10,7 +10,7 @@ This is an area of functionality that you might not ever need. If you do need it
 >
 > C.S. Lewis
 
-AllFutures provides an obsessively complete API for inspecting, manipulating and reversing changes to your model's attributes.
+All Futures provides an obsessively complete API for inspecting, manipulating and reversing changes to your model's attributes.
 
 If history is written by the winner, there are three high-level concepts that you need to :bulb: so that you can win:
 
@@ -44,13 +44,13 @@ example.name = "Fred"
 puts example.name        # Changed to Fred
 ```
 
-AllFutures is able to keep track of the **previous** value before an attribute was saved, the value it became when it **was** saved, and the value it **changed** to after it was saved. Only the most recent current value is stored, and if nothing changes, it's possible two or all three \[of the previous/was/changed] values could be the same.
+All Futures is able to keep track of the **previous** value before an attribute was saved, the value it became when it **was** saved, and the value it **changed** to after it was saved. Only the most recent current value is stored, and if nothing changes, it's possible two or all three \[of the previous/was/changed] values could be the same.
 
 ### Tracking
 
 Internally, the `changes_applied` method is called when the current state of the attributes is saved to Redis. This is done for you with the standard CRUD methods like `save` and `update`.
 
-You will find methods for interrogating the values for each attribute at every stage, as well as tools for rolling back to previous versions. **There are also methods which direct AllFutures to forget that changes happened at all.**
+You will find methods for interrogating the values for each attribute at every stage, as well as tools for rolling back to previous versions. **There are also methods which direct All Futures to forget that changes happened at all.**
 
 ### Forest or Trees
 
@@ -121,7 +121,7 @@ Clears dirty data and moves changes to previous changes.
 
 #### clear\_attribute\_change(attribute), clear\_attribute\_changes(Array)
 
-Remove dirty tracking data for an attribute or an Array of attributes, without modifying the value itself. This has the effect of fooling AllFutures into forgetting that data was changed.
+Remove dirty tracking data for an attribute or an Array of attributes, without modifying the value itself. This has the effect of fooling All Futures into forgetting that data was changed.
 
 Singluar form returns `nil` while plural form returns an Array of attributes that had their dirty tracking data removed.
 
@@ -135,7 +135,7 @@ Reports `true` or `false` depending on whether there any attributes with data th
 
 #### previous\_attributes
 
-Returns a Hash of the attributes on your AllFutures model instance, with the values reflecting their state before the last `save` operation.
+Returns a Hash of the attributes on your All Futures model instance, with the values reflecting their state before the last `save` operation.
 
 #### previous\_changes, previous\_changes?
 

@@ -24,4 +24,4 @@ The transition to `readonly`, is one-directional and cannot be reversed. If you 
 
 #### readonly\_attributes
 
-Returns a Set of attributes that are marked with `attr_readonly` in your AllFutures class. Attributes in the Set are presented as Strings.
+Returns a Set of attributes that are marked with `attr_readonly` in your All Futures class. Attributes in the Set are presented as Strings.

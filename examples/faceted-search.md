@@ -4,13 +4,13 @@ description: Filtering, Pagination and Sorting
 
 # Faceted Search
 
-Define a class that inherits from `AllFutures`, in a location that makes sense for your application. Many times, `app/models` is a suitable home but in the example, an `app/filters` folder was created.
+Define a class that inherits from `All Futures`, in a location that makes sense for your application. Many times, `app/models` is a suitable home but in the example, an `app/filters` folder was created.
 
 Your first task is to define attributes representing the data structure you intend to persist. `attribute` supports all of the same data types you could use in a migration:
 
 {% code title="app/filters/customer_filter.rb" %}
 ```ruby
-class CustomerFilter < AllFutures
+class CustomerFilter < AllFutures::Base
   # Facets
   attribute :search, :string
   attribute :threshold, :float, default: 0.1
@@ -30,7 +30,7 @@ end
 ```
 {% endcode %}
 
-The above code is an example of using AllFutures to implement an exclusion filter. It's taken from the [Beast Mode repo](https://github.com/leastbad/beast\_mode), and is used to hold the values required to create a faceted search UI for a tabular dataset.
+The above code is an example of using All Futures to implement an exclusion filter. It's taken from the [Beast Mode repo](https://github.com/leastbad/beast\_mode), and is used to hold the values required to create a faceted search UI for a tabular dataset.
 
 ### Filtering, Pagination and Sorting
 
@@ -61,7 +61,7 @@ For example, it's recommended that you configure [Pagy](https://github.com/ddnex
 Since this example doesn't require any attribute validation, we complete the Filter by defining a `scope` method to return an `ActiveRecord::Relation` object. You can pass this relation directly into [Pagy](https://github.com/ddnexus/pagy) to perform the search, or additional scope clauses can be added to suit the needs of your application.
 
 ```ruby
-class CustomerFilter < AllFutures
+class CustomerFilter < AllFutures::Base
 
   # Attribute definitions cut for brevity
 

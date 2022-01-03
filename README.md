@@ -1,4 +1,4 @@
-# AllFutures
+# All Futures
 
 Rails developers can use the [all\_futures](https://github.com/leastbad/all\_futures) gem to persist data **across multiple requests**. It leverages Redis to provide an ephemeral model that you can use just like an Active Record model.
 
@@ -8,7 +8,7 @@ Try a demo, here: 👉 [Beast Mode StimulusReflex](https://beastmode.leastbad.co
 
 [![GitHub stars](https://img.shields.io/github/stars/leastbad/all\_futures?style=social)](https://github.com/leastbad/all\_futures) [![GitHub forks](https://img.shields.io/github/forks/leastbad/all\_futures?style=social)](https://github.com/leastbad/all\_futures) [![Twitter follow](https://img.shields.io/twitter/follow/theleastbad?style=social)](https://twitter.com/theleastbad) [![Discord](https://img.shields.io/discord/629472241427415060)](https://discord.gg/stimulus-reflex)
 
-## Why use AllFutures?
+## Why use All Futures?
 
 Many reactive UI concepts are a pain in the ass to implement using the classic Rails request/response pattern, which was created at a time before developers started using Ajax to update portions of a page. ActionController is amazing, but if a user interaction doesn't fit cleanly into a single form submission, the developer now has to maintain UI state across multiple atomic requests. Naturally, this leads to abuse of the session object and awkward hacks to validate and persist models.
 
@@ -20,9 +20,9 @@ The combination of ActionCable and Turbo Drive creates a persistent Connection t
 
 Moving forward, new tooling is required to take full advantage of reactive possibilities.
 
-AllFutures presents a flexible and lightweight mechanism to refine a model that persists its attributes across multiple updates, and even multiple servers.
+All Futures presents a flexible and lightweight mechanism to refine a model that persists its attributes across multiple updates, and even multiple servers.
 
-## Is AllFutures for you?
+## Is All Futures for you?
 
 Do you ever find yourself:
 
@@ -35,7 +35,7 @@ Do you ever find yourself:
 
 If you answered yes to any of the above... you are every Rails developer, and you're not crazy. This functionality has been a blind-spot in the framework for a long time.
 
-Yes, AllFutures is for **you**.
+Yes, All Futures is for **you**.
 
 ## Key features and advantages
 
@@ -50,9 +50,9 @@ Yes, AllFutures is for **you**.
 * Can be added as attributes in your Active Record model classes
 * No more temporary database tables that need to be purged later
 
-## How does AllFutures work?
+## How does All Futures work?
 
-AllFutures is the fusion of [Active Entity](https://github.com/jasl/activeentity) and [Kredis](https://github.com/rails/kredis). It is similar to using a **properly juiced** [ActiveModel::Model](https://api.rubyonrails.org/classes/ActiveModel/Model.html), except that it has full support for [Attributes](https://api.rubyonrails.org/classes/ActiveRecord/Attributes/ClassMethods.html#method-i-attribute), including arrays and nested attributes. AllFutures classes behave like Active Record model instances as much as possible.
+All Futures is the fusion of [Active Entity](https://github.com/jasl/activeentity) and [Kredis](https://github.com/rails/kredis). It is similar to using a **properly juiced** [ActiveModel::Model](https://api.rubyonrails.org/classes/ActiveModel/Model.html), except that it has full support for [Attributes](https://api.rubyonrails.org/classes/ActiveRecord/Attributes/ClassMethods.html#method-i-attribute), including arrays and nested attributes. All Futures classes behave like Active Record model instances as much as possible.
 
 ```ruby
 class Example < AllFutures::Base
@@ -65,31 +65,31 @@ example.valid? # false
 example.errors # @errors=[#<ActiveModel::Error attribute=name, type=blank, options={}>]
 ```
 
-Unlike an Active Record model, AllFutures instances can persist their attributes even if the attributes are currently invalid. This design allows you to resolve any errors present, even if it takes several distinct operations to do so.
+Unlike an Active Record model, All Futures instances can persist their attributes even if the attributes are currently invalid. This design allows you to resolve any errors present, even if it takes several distinct operations to do so.
 
-Once the state of your attributes is valid, you can pass the `attributes` from your AllFutures model right into the constructor of a real Active Record model.
+Once the state of your attributes is valid, you can pass the `attributes` from your All Futures model right into the constructor of a real Active Record model.
 
 {% hint style="danger" %}
-AllFutures v1 persisted the attributes every time you set the value of an attribute using bracket notation. **This behavior has been removed.** An explicit `save` operation is now required to persist changes.
+All Futures v1 persisted the attributes every time you set the value of an attribute using bracket notation. **This behavior has been removed.** An explicit `save` operation is now required to persist changes.
 {% endhint %}
 
 ## Who makes this?
 
-First, AllFutures wouldn't exist without [Active Entity](https://github.com/jasl/activeentity) and [Kredis](https://github.com/rails/kredis). Thank you, [Jun Jiang](https://twitter.com/jasl9187) and [Kasper Timm Hansen](https://twitter.com/kaspth).
+First, All Futures wouldn't exist without [Active Entity](https://github.com/jasl/activeentity) and [Kredis](https://github.com/rails/kredis). Thank you, [Jun Jiang](https://twitter.com/jasl9187) and [Kasper Timm Hansen](https://twitter.com/kaspth).
 
-AllFutures was originally created by leastbad, who continues to serve as the primary developer and writer of words. :wave:
+All Futures was originally created by leastbad, who continues to serve as the primary developer and writer of words. :wave:
 
-v2 welcomes pivotal contributions from key members of the [StimulusReflex](https://stimulusreflex.com) core and moderation teams. [Stephen Margheim](https://twitter.com/fractaledmind) heroically made sure that callbacks work as expected, _twice_. [Julian Rubisch](https://twitter.com/julian\_rubisch) is the reason AllFutures models are basically interoperable with Active Record models.
+v2 welcomes pivotal contributions from key members of the [StimulusReflex](https://stimulusreflex.com) core and moderation teams. [Stephen Margheim](https://twitter.com/fractaledmind) heroically made sure that callbacks work as expected, _twice_. [Julian Rubisch](https://twitter.com/julian\_rubisch) is the reason All Futures models are basically interoperable with Active Record models.
 
 Finally, thanks to [Nate Hopkins](https://twitter.com/hopsoft/) and [Konnor Rogers](https://twitter.com/rogerskonnor/) for their feedback and suggestions.
 
 We realized that this library needed to exist and had a deep understanding of how it should work _only_ because we have spent years helping thousands of Rails developers figure out the right way to develop reactive UIs.
 
-AllFutures truly was born in fire. :fire:
+All Futures truly was born in fire. :fire:
 
 ## Try it now
 
-You can experiment with [Beast Mode StimulusReflex](https://beastmode.leastbad.com), a live demonstration of using AllFutures to drill down into a tabular dataset, [**right now**](https://beastmode.leastbad.com). 👈
+You can experiment with [Beast Mode StimulusReflex](https://beastmode.leastbad.com), a live demonstration of using All Futures to drill down into a tabular dataset, [**right now**](https://beastmode.leastbad.com). 👈
 
 The Beast Mode [codebase](https://github.com/leastbad/beast\_mode) [![GitHub stars](https://img.shields.io/github/stars/leastbad/beast\_mode?style=social)](https://github.com/leastbad/beast\_mode) [![GitHub forks](https://img.shields.io/github/forks/leastbad/beast\_mode?style=social)](https://github.com/leastbad/beast\_mode) is set up as a **template repo** which I recommend that you clone and experiment with.
 
