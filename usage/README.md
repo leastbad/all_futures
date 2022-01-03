@@ -68,7 +68,7 @@ All Futures v1 persisted the attributes every time you set the value of an attri
 
 ### Creating and finding instances
 
-There are two ways to create an All Futures class instance: `new` and `create`. Both methods accept an optional Hash of attributes:
+There are two ways to create an All Futures class instance: [`new`](../api-reference/class-methods.md#new-attributes) and [`create`](../api-reference/class-methods.md#create-attributes). Both methods accept an optional Hash of attributes:
 
 ```ruby
 Example.new # no values set, and not yet persisted
@@ -83,7 +83,7 @@ example_id = Example.create(name: "Bob").id # winning
 
 `create` is exactly like `new`, except that it has already been persisted to Redis and has an `id` property assigned. **If you need to set your own `id`, it's important to use `new`.**
 
-Retrieving an instance later just requires passing an `id` to the `find` method. Numeric values will be converted to String type for performing the lookup.
+Retrieving an instance later just requires passing an `id` to the [`find`](../api-reference/class-methods.md#find-id-find-id1-id2-find-id1-id2) method. Numeric values will be converted to String type for performing the lookup.
 
 ```ruby
 example = Example.find(example_id)
@@ -95,12 +95,15 @@ In All Futures, [`id`](../api-reference/getter-methods.md#id) is not an attribut
 
 ### Reserved words
 
-A likely-incomplete list of attribute/method names that you shouldn't use as attributes:
+An incomplete list of attribute/method names that you shouldn't use as attributes:
 
 * id
 * created\_at
 * updated\_at
-* reject
+
+{% hint style="info" %}
+If you are experiencing strange behaviour with an attribute, consider using the `respond_to?` method the see if there is a naming conflict.
+{% endhint %}
 
 ### Internationalization
 

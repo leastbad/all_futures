@@ -1,3 +1,7 @@
+---
+description: A Redis ORM for reactive app developers that quacks like Active Record 🦆
+---
+
 # All Futures
 
 Rails developers can use the [all\_futures](https://github.com/leastbad/all\_futures) gem to persist data **across multiple requests**. It leverages Redis to provide an ephemeral model that you can use just like an Active Record model.
@@ -7,20 +11,6 @@ It's perfect for building faceted search interfaces, multi-step forms, real-time
 Try a demo, here: 👉 [Beast Mode StimulusReflex](https://beastmode.leastbad.com) 👈
 
 [![GitHub stars](https://img.shields.io/github/stars/leastbad/all\_futures?style=social)](https://github.com/leastbad/all\_futures) [![GitHub forks](https://img.shields.io/github/forks/leastbad/all\_futures?style=social)](https://github.com/leastbad/all\_futures) [![Twitter follow](https://img.shields.io/twitter/follow/theleastbad?style=social)](https://twitter.com/theleastbad) [![Discord](https://img.shields.io/discord/629472241427415060)](https://discord.gg/stimulus-reflex)
-
-## Why use All Futures?
-
-Many reactive UI concepts are a pain in the ass to implement using the classic Rails request/response pattern, which was created at a time before developers started using Ajax to update portions of a page. ActionController is amazing, but if a user interaction doesn't fit cleanly into a single form submission, the developer now has to maintain UI state across multiple atomic requests. Naturally, this leads to abuse of the session object and awkward hacks to validate and persist models.
-
-{% hint style="danger" %}
-How do you incrementally save models that require the presence of multiple attributes to be valid? In vanilla Rails, _you don't_.
-{% endhint %}
-
-The combination of ActionCable and Turbo Drive creates a persistent Connection that blurs the line between session and request, forcing a new mental model that is poorly served by ActionDispatch and the conventions which drove Rails to success... in 2005.
-
-Moving forward, new tooling is required to take full advantage of reactive possibilities.
-
-All Futures presents a flexible and lightweight mechanism to refine a model that persists its attributes across multiple updates, and even multiple servers.
 
 ## Is All Futures for you?
 
@@ -36,6 +26,20 @@ Do you ever find yourself:
 If you answered yes to any of the above... you are every Rails developer, and you're not crazy. This functionality has been a blind-spot in the framework for a long time.
 
 Yes, All Futures is for **you**.
+
+## Why use All Futures?
+
+Many reactive UI concepts are a pain in the ass to implement using the classic Rails request/response pattern, which was created at a time before developers started using Ajax to update portions of a page. ActionController is amazing, but if a user interaction doesn't fit cleanly into a single form submission, the developer now has to maintain UI state across multiple atomic requests. Naturally, this leads to abuse of the session object and awkward hacks to validate and persist models.
+
+{% hint style="danger" %}
+In vanilla Rails, it's very difficult to incrementally save models that require the presence of multiple attributes to be valid.
+{% endhint %}
+
+The combination of ActionCable and Turbo Drive creates a persistent Connection that blurs the line between session and request, forcing a new mental model that is poorly served by ActionDispatch and the conventions which drove Rails to success... in 2005.
+
+Moving forward, new tooling is required to take full advantage of reactive possibilities.
+
+All Futures presents a flexible and lightweight mechanism to refine a model that persists its attributes across multiple updates, and even multiple servers.
 
 ## Key features and advantages
 

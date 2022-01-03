@@ -12,14 +12,14 @@ Returns an Array of Strings containing the attributes on your All Futures model 
 `attribute_names` is also available as an instance getter method.
 {% endhint %}
 
-#### create
+#### create(attributes = {})
 
-#### exists?
+#### exists?(id)
 
-#### find
+#### find(id), find(id1, id2), find(\[id1, id2])
 
 #### find\_by
 
-#### new
+#### new(attributes = {})
 
 #### where
