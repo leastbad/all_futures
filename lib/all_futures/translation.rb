@@ -16,7 +16,7 @@ module AllFutures
     end
 
     def i18n_scope
-      :all_futures
+      :allfutures
     end
   end
 end

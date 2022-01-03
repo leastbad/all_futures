@@ -2,6 +2,8 @@
 
 module AllFutures
   module Dirty
+    extend ActiveSupport::Concern
+
     def attribute_change(attribute)
       _raise_unknown_attribute_error(attribute) unless attributes.key?(attribute.to_s)
       attribute_was(attribute) == self[attribute] ? nil : [attribute_was(attribute), self[attribute]]
@@ -93,6 +95,18 @@ module AllFutures
 
     def saved_changes
       attributes.select { |attribute| attribute_previously_changed? attribute }
+    end
+
+    module ClassMethods
+      def set_previous_attributes(model, record)
+        tracker = ActiveModel::AttributeMutationTracker.new(model.instance_variable_get("@attributes"))
+        previous_values = tracker.instance_variable_get("@attributes").instance_variable_get("@attributes")
+        previous_values.each do |key, attribute|
+          original = attribute.instance_variable_get("@original_attribute")
+          original.instance_variable_set "@value_before_type_cast", record["previous_attributes"][key]
+        end
+        model.instance_variable_set "@mutations_before_last_save", tracker
+      end
     end
   end
 end

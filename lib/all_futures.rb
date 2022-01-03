@@ -10,9 +10,10 @@ require "all_futures/versions"
 require "all_futures/dirty"
 require "all_futures/validations"
 require "all_futures/attributes"
-require "all_futures/persist"
-require "all_futures/timestamp"
+require "all_futures/persistence"
+require "all_futures/presenter"
 require "all_futures/translation"
+require "all_futures/finder"
 require "all_futures/base"
 
 require "all_futures/railtie" if defined?(Rails::Railtie)

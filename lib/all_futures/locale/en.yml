@@ -12,7 +12,7 @@ en:
       duplicated: "duplicated"
 
   # AllFutures models configuration
-  all_futures:
+  allfutures:
     errors:
       messages:
         record_invalid: "Validation failed: %{errors}"

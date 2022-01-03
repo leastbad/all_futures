@@ -1,17 +1,16 @@
 # frozen_string_literal: true
 
 module AllFutures
-  class RecordNotFound < StandardError; end
-
   class Base < ActiveEntity::Base
     prepend ::AllFutures::Callbacks
     extend ::ActiveModel::Naming
     extend ::AllFutures::Translation
-    include ::AllFutures::Persist
+    include ::AllFutures::Persistence
     include ::AllFutures::Dirty
     include ::AllFutures::Validations
-    include ::AllFutures::Timestamp
+    include ::AllFutures::Presenter
     include ::AllFutures::Versions
+    include ::AllFutures::Finder
     include ::ActiveModel::Conversion
     include ::ActiveModel::SecurePassword
     include ::ActiveRecord::Integration
@@ -48,67 +47,6 @@ module AllFutures
       end
     end
 
-    class << self
-      def all
-        Kredis.redis.scan_each(match: "#{name}:*").map { |key| find(key.delete_prefix("#{name}:")) }
-      end
-
-      def any?
-        all.any?
-      end
-
-      def create(attributes = {})
-        new(attributes).tap { |record| record.save }
-      end
-
-      def find(*ids)
-        raise ActiveRecord::RecordNotFound.new("Couldn't find #{name} without an id") unless ids.flatten.present?
-        if ids.size == 1 && [String, Integer, Symbol].include?(ids.first.class)
-          record = load_model(ids.first)
-          model = new record["attributes"].merge(id: ids.first)
-          load_versions(model, record)
-          set_previous_attributes(model, record)
-          model.instance_variable_set "@created_at", Time.zone.parse(record["created_at"])
-          model.instance_variable_set "@updated_at", Time.zone.parse(record["updated_at"])
-          model
-        else
-          results = ids.flatten.map do |id|
-            find(id)
-          rescue AllFutures::RecordNotFound
-            nil
-          end
-          return results if results.size == results.compact.size
-          raise AllFutures::RecordNotFound.new("Couldn't find all #{name.pluralize} with ids: #{ids.flatten.join(", ")} (found #{results.compact.size} results, but was looking for #{results.size})")
-        end
-      end
-
-      def exists?(id)
-        Kredis.redis.exists?("#{name}:#{id}")
-      end
-
-      def readonly_attribute?(name)
-        _attr_readonly.include?(name.to_s)
-      end
-
-      private
-
-      def load_model(id)
-        record = Kredis.json("#{name}:#{id}").value
-        raise AllFutures::RecordNotFound.new("Couldn't find #{name} with id #{id}") unless record
-        record
-      end
-
-      def set_previous_attributes(model, record)
-        tracker = ActiveModel::AttributeMutationTracker.new(model.instance_variable_get("@attributes"))
-        previous_values = tracker.instance_variable_get("@attributes").instance_variable_get("@attributes")
-        previous_values.each do |key, attribute|
-          original = attribute.instance_variable_get("@original_attribute")
-          original.instance_variable_set "@value_before_type_cast", record["previous_attributes"][key]
-        end
-        model.instance_variable_set "@mutations_before_last_save", tracker
-      end
-    end
-
     def id
       new_record? ? nil : @id
     end
@@ -117,28 +55,6 @@ module AllFutures
       raise FrozenError.new("can't modify id when persisted") unless new_record?
       @id = value.to_s
       @redis_key = "#{self.class.name}:#{@id}"
-    end
-
-    def to_dom_id
-      [self.class.name.underscore.dasherize.gsub("/", "--"), id].join("-")
-    end
-
-    def to_s
-      inspect
-    end
-
-    def to_h
-      attributes
-    end
-
-    def reject
-      attributes
-    end
-
-    private
-
-    def _raise_unknown_attribute_error(attribute)
-      raise ActiveModel::UnknownAttributeError.new(self, attribute)
     end
   end
 

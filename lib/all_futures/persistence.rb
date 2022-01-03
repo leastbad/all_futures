@@ -3,7 +3,9 @@
 module AllFutures
   class RecordNotSaved < StandardError; end
 
-  module Persist
+  module Persistence
+    extend ActiveSupport::Concern
+
     def decrement(attribute, by = 1)
       increment attribute, -by
     end
@@ -188,10 +190,32 @@ module AllFutures
       raise ActiveRecord::RecordNotSaved, "Failed to save the record"
     end
 
+    def _raise_unknown_attribute_error(attribute)
+      raise ActiveModel::UnknownAttributeError.new(self, attribute)
+    end
+
     def _update_record
       _save_record
       @previously_new_record = false
       true
+    end
+
+    module ClassMethods
+      def create(attributes = {})
+        new(attributes).tap { |record| record.save }
+      end
+
+      def readonly_attribute?(name)
+        _attr_readonly.include?(name.to_s)
+      end
+
+      private
+
+      def load_model(id)
+        record = Kredis.json("#{name}:#{id}").value
+        raise AllFutures::RecordNotFound.new("Couldn't find #{name} with id #{id}") unless record
+        record
+      end
     end
   end
 end
