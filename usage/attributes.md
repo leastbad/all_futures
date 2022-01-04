@@ -90,7 +90,7 @@ example.attributes # => {"steve"=>"buscemi"}
 
 The other quirk of this implementation is that you must create your `attribute` **before** you call `enum`.
 
-`enum` does not create the search scopes that might be familar to Active Model users, since there is no search or `where` concept in All Futures. You can, however, access the mapping directly to obtain the index number for a given value:
+`enum` does not create the search scopes that might be familar to Active Model users, since there is no `ActiveRecord::Relation` or scope concept in All Futures. You can, however, access the mapping directly to obtain the index number for a given value:
 
 ```ruby
 Example.steves[:buscemi] # => 9
