@@ -1,16 +1,8 @@
-GIT
-  remote: https://github.com/jasl/activeentity.git
-  revision: 662d97ae96ab4c6393c1ac96edad7ef66f075d86
-  branch: master
-  specs:
-    activeentity (6.3.0)
-      activemodel (>= 6.0, < 8)
-      activesupport (>= 6.0, < 8)
-
 PATH
   remote: .
   specs:
     all_futures (1.0.3)
+      activeentity (~> 6.3)
       activemodel (>= 4.0)
       activerecord (>= 4.0)
       activesupport (>= 4.0)
@@ -32,6 +24,9 @@ GEM
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.1, >= 1.2.0)
+    activeentity (6.3.0)
+      activemodel (>= 6.0, < 8)
+      activesupport (>= 6.0, < 8)
     activemodel (6.1.4.4)
       activesupport (= 6.1.4.4)
     activerecord (6.1.4.4)
@@ -124,7 +119,6 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  activeentity!
   all_futures!
   magic_frozen_string_literal (~> 1.2.0)
   railties (>= 4.0)
