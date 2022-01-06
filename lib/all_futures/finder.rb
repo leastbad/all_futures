@@ -3,6 +3,8 @@
 module AllFutures
   class RecordNotFound < StandardError; end
 
+  class InvalidAttribute < StandardError; end
+
   module Finder
     extend ActiveSupport::Concern
 
@@ -22,7 +24,7 @@ module AllFutures
       end
 
       def find(*ids)
-        raise ActiveRecord::RecordNotFound.new("Couldn't find #{name} without an id") unless ids.flatten.present?
+        raise AllFutures::RecordNotFound.new("Couldn't find #{name} without an id") unless ids.flatten.present?
         if ids.size == 1 && [String, Integer, Symbol].include?(ids.first.class)
           record = load_model(ids.first)
           model = new record["attributes"].merge(id: ids.first)
@@ -42,10 +44,33 @@ module AllFutures
         end
       end
 
-      def find_by
+      def find_by(attrs = {})
+        result = where(attrs)
+        result.any? ? result.first : nil
       end
 
-      def where
+      def find_by!(attrs = {})
+        result = find_by(attrs)
+        result.present? ? result : raise(AllFutures::RecordNotFound.new("Couldn't find #{name} with #{_pretty_attrs(attrs)}"))
+      end
+
+      def valid_attribute?(attribute)
+        (attribute_names + ["id"]).include?(attribute.to_s)
+      end
+
+      def where(attrs = {})
+        return all if attrs.blank?
+        attrs.each_key { |key| raise AllFutures::InvalidAttribute.new("#{key} is not a valid attribute") unless valid_attribute?(key) }
+        return find(attrs.values.first) if attrs.one? && attrs.keys.first == :id
+        all.select do |record|
+          attrs.all? { |(attribute, value)| record.send(attribute) == value.to_s }
+        end
+      end
+
+      private
+
+      def _pretty_attrs(attrs)
+        attrs.map { |key, value| "#{key}: #{value}" }.join(", ")
       end
     end
   end
