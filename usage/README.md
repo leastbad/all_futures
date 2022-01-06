@@ -81,7 +81,11 @@ Example.create # no values set; persisted but no way to access the id
 example_id = Example.create(name: "Bob").id # winning
 ```
 
-`create` is exactly like `new`, except that it has already been persisted to Redis and has an `id` property assigned. **If you need to set your own `id`, it's important to use `new`.**
+`create` is exactly like `new`, except that the model instance is persisted to Redis before it returns. **If you want to set your own `id` when calling `create`, it's important to specify an `id` value.**
+
+```ruby
+Example.create name: "Bob", id: 555
+```
 
 Retrieving an instance later just requires passing an `id` to the [`find`](../api-reference/class-methods.md#find-id-find-id1-id2-find-id1-id2) method. Numeric values will be converted to String type for performing the lookup.
 
@@ -107,4 +111,6 @@ If you are experiencing strange behaviour with an attribute, consider using the 
 
 ### Internationalization
 
-I18n in All Futures is similar to [Active Record](https://guides.rubyonrails.org/i18n.html#translations-for-active-record-models). The root of locale YAML is `allfutures` instead of `activerecord`.
+I18n in All Futures is similar to [Active Record](https://guides.rubyonrails.org/i18n.html#translations-for-active-record-models).
+
+The root node in your locale YAML is `allfutures` instead of `activerecord`.
