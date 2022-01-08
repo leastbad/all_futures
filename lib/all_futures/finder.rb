@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 module AllFutures
-  class RecordNotFound < StandardError; end
-
-  class InvalidAttribute < StandardError; end
-
   module Finder
     extend ActiveSupport::Concern
 

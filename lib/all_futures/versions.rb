@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 module AllFutures
-  class VersionNotFound < StandardError; end
-
   module Versions
     extend ActiveSupport::Concern
 

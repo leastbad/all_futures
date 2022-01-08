@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 module AllFutures
-  class ParentModelNotSavedYet < StandardError; end
-
   module Attributes
     extend ActiveSupport::Concern
 

@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 module AllFutures
-  class RecordNotSaved < StandardError; end
-
   module Persistence
     extend ActiveSupport::Concern
 
@@ -37,7 +35,7 @@ module AllFutures
     end
 
     def increment(attribute, by = 1)
-      _raise_unknown_attribute_error(attribute) unless attributes.key?(attribute.to_s)
+      _raise_invalid_attribute_error(attribute) unless attributes.key?(attribute.to_s)
       self[attribute] ||= 0
       self[attribute] += by
       self
@@ -81,7 +79,7 @@ module AllFutures
 
     def save
       create_or_update
-    rescue ActiveRecord::RecordInvalid
+    rescue AllFutures::RecordInvalid
       false
     end
 
@@ -90,13 +88,13 @@ module AllFutures
     end
 
     def toggle(attribute)
-      _raise_unknown_attribute_error(attribute) unless attributes.key?(attribute.to_s)
+      _raise_invalid_attribute_error(attribute) unless attributes.key?(attribute.to_s)
       self[attribute] = !public_send("#{attribute}?")
       self
     end
 
     def toggle!(attribute)
-      _raise_unknown_attribute_error(attribute) unless attributes.key?(attribute.to_s)
+      _raise_invalid_attribute_error(attribute) unless attributes.key?(attribute.to_s)
       toggle attribute
       update_attribute attribute, self[attribute]
     end
@@ -112,7 +110,7 @@ module AllFutures
     end
 
     def update_attribute(attribute, value)
-      _raise_unknown_attribute_error(attribute) unless attributes.key?(attribute.to_s)
+      _raise_invalid_attribute_error(attribute) unless attributes.key?(attribute.to_s)
       _raise_readonly_attribute_error(attribute) if attr_readonly_enabled? && readonly_attribute?(attribute) && attribute_will_change?(attribute)
       write_attribute attribute, value
 
@@ -175,23 +173,23 @@ module AllFutures
     end
 
     def _raise_readonly_attribute_error(attribute)
-      raise ActiveRecord::ReadOnlyRecord, "#{attribute} is marked as readonly"
+      raise AllFutures::ReadOnlyRecord, "#{attribute} is marked as readonly"
     end
 
     def _raise_readonly_record_error
-      raise ActiveRecord::ReadOnlyRecord, "#{self.class} is marked as readonly"
+      raise AllFutures::ReadOnlyRecord, "#{self.class} is marked as readonly"
     end
 
     def _raise_record_not_destroyed_error
-      raise ActiveRecord::RecordNotDestroyed, "Failed to destroy the record"
+      raise AllFutures::RecordNotDestroyed, "Failed to destroy the record"
     end
 
     def _raise_record_not_saved_error
-      raise ActiveRecord::RecordNotSaved, "Failed to save the record"
+      raise AllFutures::RecordNotSaved, "Failed to save the record"
     end
 
-    def _raise_unknown_attribute_error(attribute)
-      raise ActiveModel::UnknownAttributeError.new(self, attribute)
+    def _raise_invalid_attribute_error(attribute)
+      raise AllFutures::InvalidAttribute.new(self, attribute)
     end
 
     def _update_record
