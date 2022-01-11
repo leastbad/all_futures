@@ -50,6 +50,24 @@ module AllFutures
         result.present? ? result : raise(AllFutures::RecordNotFound.new("Couldn't find #{name} with #{_pretty_attrs(attrs)}"))
       end
 
+      def find_or_create_by(attrs = {})
+        attrs.each_key { |key| raise AllFutures::InvalidAttribute.new("#{key} is not a valid attribute") unless valid_attribute?(key) }
+        begin
+          find_by!(attrs)
+        rescue AllFutures::RecordNotFound
+          create(attrs)
+        end
+      end
+
+      def find_or_initialize_by(attrs = {})
+        attrs.each_key { |key| raise AllFutures::InvalidAttribute.new("#{key} is not a valid attribute") unless valid_attribute?(key) }
+        begin
+          find_by!(attrs)
+        rescue AllFutures::RecordNotFound
+          new(attrs)
+        end
+      end
+
       def valid_attribute?(attribute)
         (attribute_names + ["id"]).include?(attribute.to_s)
       end
