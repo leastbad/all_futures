@@ -75,7 +75,11 @@ module AllFutures
       def where(attrs = {})
         return all if attrs.blank?
         attrs.each_key { |key| raise AllFutures::InvalidAttribute.new("#{key} is not a valid attribute") unless valid_attribute?(key) }
-        return find(attrs.values.first) if attrs.one? && attrs.keys.first == :id
+        begin
+          return [find(attrs.values.first)] if attrs.one? && attrs.keys.first == :id
+        rescue AllFutures::RecordNotFound
+          return []
+        end
         all.select do |record|
           attrs.all? { |(attribute, value)| record.send(attribute) == value.to_s }
         end
