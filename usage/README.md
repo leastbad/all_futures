@@ -66,7 +66,7 @@ You can now update your instance across multiple calls or requests, regardless o
 All Futures v1 persisted the attributes every time you set the value of an attribute using bracket notation. **This behavior has been removed.** An explicit `save` operation is now required to persist changes.
 {% endhint %}
 
-### Creating and finding instances
+### Creating model instances
 
 There are two ways to create an All Futures class instance: [`new`](../api-reference/class-methods.md#new-attributes) and [`create`](../api-reference/class-methods.md#create-attributes). Both methods accept an optional Hash of attributes:
 
@@ -86,6 +86,8 @@ example_id = Example.create(name: "Bob").id # winning
 ```ruby
 Example.create name: "Bob", id: 555
 ```
+
+### Finding model instances
 
 Retrieving an instance later just requires passing an `id` to the [`find`](../api-reference/class-methods.md#find-id-find-id1-id2-find-id1-id2) method. Numeric values will be converted to String type for performing the lookup.
 

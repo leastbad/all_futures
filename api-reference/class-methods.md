@@ -18,6 +18,8 @@ Unlike Active Record models, class names are not Relations and are not composabl
 
 #### all
 
+Perform a keyspace scan and return an Array containing all records that have been created.
+
 #### any?
 
 Returns `true` or `false` depending on whether there are any records in the Redis keyspace for this model. This will trigger a keyspace scan, so you might be better off using `all` or `where` and testing the Array returned with `any?` instead of using this method.
@@ -50,7 +52,19 @@ If you pass `false`, it will return `false`. Finally, if you pass nothing, it ca
 
 #### find(id), find(id1, id2), find(\[id1, id2])
 
-#### find\_by
+Retrieve one or more AllFutures model instances. If you pass one `id`, it will return the model instance.
+
+If you pass either a list of `id`s or an Array of `id`s, you will receive an Array of model instances.
+
+Regardless of how many `id`s that you pass into `find`, all of them must be available or an `AllFutures::RecordNotFound` exception will be raised.
+
+#### find\_by(attributes = {})
+
+Perform a keyspace scan and return either the first record with attributes that match, or `nil`.
+
+#### find\_by!(attributes = {})
+
+Perform a keyspace scan and return either the first record with attributes that match or raise an `AllFutures::RecordNotFound` exception.
 
 #### new(attributes = {})
 
@@ -58,6 +72,24 @@ Pass a Hash of attributes to initialize an instance of your All Futures model th
 
 Optionally, you may pass an `id` in the Hash, alongside the attributes.
 
-#### where
+#### valid\_attribute?(attribute)
 
-If you specify an attribute that is not present on the model, it will raise an `ActiveModel::UnknownAttributeError` exception.
+Return `true` or `false` depending on whether the `attribute` provided is either `id` or a valid attribute that has been defined in your All Futures class.
+
+#### where(attributes = {})
+
+Perform a keyspace scan and return an Array containing the records which match the attributes provided. This is an all-or-nothing comparison; records must match all attributes specified.
+
+```ruby
+Example.where name: "Steve"
+```
+
+If no records match, `where` will return an empty Array.
+
+{% hint style="warning" %}
+Remember, `where` returns an Array, not an `ActiveRecord::Relation`. You can apply the usual `Enumerable` methods, but you cannot specify complex queries, scopes or chain multiple clauses at this time.
+
+String and Array parameters are not supported at this time.
+{% endhint %}
+
+If you specify an attribute that is not present on the model, it will raise an `AllFutures::InvalidAttribute` exception.
