@@ -72,7 +72,7 @@ Unfortunately, it's not currently possible for an All Futures instance to track 
 
 A true classic - accept no substitutes! `save` will persist the current state of the attributes and inform the dirty checking mechanism that changes are now past-tense.
 
-Both methods return `true` if the operation is successful. If unsuccessful, `save` will return `false` while `save!` will raise an `ActiveRecord::RecordNotSaved` exception.
+Both methods return `true` if the operation is successful. If unsuccessful, `save` will return `false` while `save!` will raise an `AllFutures::RecordNotSaved` exception.
 
 #### slice(\*methods)
 
@@ -94,9 +94,9 @@ Returns the `attributes` as a JSON-serialized String.
 
 #### update(attributes = {}), update!(attributes = {})
 
-This should be familiar to Active Record users, as it accepts a Hash of attributes to persist. Internally, the `save` method will not be called unless there are changes to at least one attribute. If you attempt to pass an invalid attribute, it will raise an `ActiveModel::UnknownAttributeError` exception.
+This should be familiar to Active Record users, as it accepts a Hash of attributes to persist. Internally, the `save` method will not be called unless there are changes to at least one attribute. If you attempt to pass an invalid attribute, it will raise an `AllFutures::InvalidAttribute` exception.
 
-Both methods return `true` if the operation is successful. If unsuccessful, `update` will return `false` while `update!` will raise an `ActiveRecord::RecordNotSaved` exception.
+Both methods return `true` if the operation is successful. If unsuccessful, `update` will return `false` while `update!` will raise an `AllFutures::RecordNotSaved` exception.
 
 #### update\_attribute(attribute, value)
 

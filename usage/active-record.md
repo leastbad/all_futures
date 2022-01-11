@@ -41,7 +41,7 @@ draft = PostDraft.new Post.last
 Behind the scenes, `PostDraft` strips out the `:id`, `:created_at` and `:updated_at` attributes, if they exist.
 
 {% hint style="danger" %}
-If your Active Record model has attributes that your All Futures model does not, passing it to `create` or `update` will raise an `ActiveModel::UnknownAttributeError`.
+If your Active Record model has attributes that your All Futures model does not, passing it to `create` or `update` will raise an `AllFutures::InvalidAttribute` exception.
 {% endhint %}
 
 ### Creating or updating from an All Futures model
@@ -77,7 +77,7 @@ post = Post.create draft.version(2)
 ```
 
 {% hint style="danger" %}
-If your All Futures model has attributes that your Active Record model does not, passing it to `create` or `update` will raise an `ActiveModel::UnknownAttributeError`.
+If your All Futures model has attributes that your Active Record model does not, passing it to `create` or `update` will raise an `AllFutures::InvalidAttribute` exception.
 {% endhint %}
 
 ### Cache Keys
