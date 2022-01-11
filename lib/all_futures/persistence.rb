@@ -199,8 +199,11 @@ module AllFutures
     end
 
     module ClassMethods
-      def create(attributes = {})
-        new(attributes).tap { |record| record.save }
+      def create(attributes = {}, &block)
+        new(attributes).tap do |record|
+          block&.call(record)
+          record.save
+        end
       end
 
       def readonly_attribute?(name)
