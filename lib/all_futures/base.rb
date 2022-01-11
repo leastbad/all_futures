@@ -51,6 +51,7 @@ module AllFutures
         @_versioning_enabled = self.class.versioning
         @_versions = {}
         @_current_version = nil
+        @_id_set = attributes.key?(:id)
 
         @attributes.keys.each do |attr|
           define_singleton_method("#{attr}_changed?") { attribute_changed?(attr) }
@@ -64,13 +65,14 @@ module AllFutures
     end
 
     def id
-      new_record? ? nil : @id
+      !new_record? || @_id_set ? @id.to_s : nil
     end
 
     def id=(value)
       raise FrozenError.new("can't modify id when persisted") unless new_record?
       @id = value.to_s
       @redis_key = "#{self.class.name}:#{@id}"
+      @_id_set = true
     end
   end
 

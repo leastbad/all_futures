@@ -51,21 +51,17 @@ module AllFutures
       end
 
       def find_or_create_by(attrs = {})
-        attrs.each_key { |key| raise AllFutures::InvalidAttribute.new("#{key} is not a valid attribute") unless valid_attribute?(key) }
-        begin
-          find_by!(attrs)
-        rescue AllFutures::RecordNotFound
-          create(attrs)
-        end
+        return create unless attrs.present?
+        find_by!(attrs)
+      rescue AllFutures::RecordNotFound
+        create(attrs)
       end
 
       def find_or_initialize_by(attrs = {})
-        attrs.each_key { |key| raise AllFutures::InvalidAttribute.new("#{key} is not a valid attribute") unless valid_attribute?(key) }
-        begin
-          find_by!(attrs)
-        rescue AllFutures::RecordNotFound
-          new(attrs)
-        end
+        return new unless attrs.present?
+        find_by!(attrs)
+      rescue AllFutures::RecordNotFound
+        new(attrs)
       end
 
       def valid_attribute?(attribute)
