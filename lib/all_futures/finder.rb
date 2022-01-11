@@ -50,11 +50,11 @@ module AllFutures
         result.present? ? result : raise(AllFutures::RecordNotFound.new("Couldn't find #{name} with #{_pretty_attrs(attrs)}"))
       end
 
-      def find_or_create_by(attrs = {})
+      def find_or_create_by(attrs = {}, &block)
         return create unless attrs.present?
         find_by!(attrs)
       rescue AllFutures::RecordNotFound
-        create(attrs)
+        create(attrs, &block)
       end
 
       def find_or_initialize_by(attrs = {})
