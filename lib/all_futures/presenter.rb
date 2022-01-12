@@ -2,6 +2,8 @@
 
 module AllFutures
   module Presenter
+    extend ActiveSupport::Concern
+
     attr_reader :updated_at
 
     def max_updated_column_timestamp
@@ -22,6 +24,12 @@ module AllFutures
 
     def to_s
       inspect
+    end
+
+    module ClassMethods
+      def valid_attribute?(attribute)
+        (attribute_names + ["id"]).include?(attribute.to_s)
+      end
     end
   end
 end

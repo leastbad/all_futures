@@ -9,8 +9,8 @@ module AllFutures
         Kredis.redis.scan_each(match: "#{name}:*").map { |key| find(key.delete_prefix("#{name}:")) }
       end
 
-      def any?
-        all.any?
+      def any?(&block)
+        block ? all.any?(&block) : all.any?
       end
 
       def exists?(id)
@@ -51,33 +51,34 @@ module AllFutures
       end
 
       def find_or_create_by(attrs = {}, &block)
-        return create unless attrs.present?
+        return create({}, &block) unless attrs.present?
         find_by!(attrs)
       rescue AllFutures::RecordNotFound
         create(attrs, &block)
       end
 
-      def find_or_initialize_by(attrs = {})
-        return new unless attrs.present?
+      def find_or_initialize_by(attrs = {}, &block)
+        return new({}, &block) unless attrs.present?
         find_by!(attrs)
       rescue AllFutures::RecordNotFound
-        new(attrs)
+        new(attrs, &block)
       end
 
-      def valid_attribute?(attribute)
-        (attribute_names + ["id"]).include?(attribute.to_s)
-      end
-
-      def where(attrs = {})
-        return all if attrs.blank?
-        attrs.each_key { |key| raise AllFutures::InvalidAttribute.new("#{key} is not a valid attribute") unless valid_attribute?(key) }
-        begin
-          return [find(attrs.values.first)] if attrs.one? && attrs.keys.first == :id
-        rescue AllFutures::RecordNotFound
-          return []
+      def where(attrs = {}, &block)
+        if block.blank?
+          return all if attrs.blank?
+          begin
+            return [find(attrs.values.first)] if attrs.one? && attrs.keys.first == :id
+          rescue AllFutures::RecordNotFound
+            return []
+          end
         end
+
+        attrs.each_key { |key| raise AllFutures::InvalidAttribute.new("#{key} is not a valid attribute") unless valid_attribute?(key) }
         all.select do |record|
-          attrs.all? { |(attribute, value)| record.send(attribute) == value.to_s }
+          attrs.all? do |(attribute, value)|
+            record.send(attribute) == value.to_s
+          end && (block ? block.call(record) : true)
         end
       end
 
