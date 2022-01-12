@@ -64,6 +64,10 @@ module AllFutures
         new(attrs, &block)
       end
 
+      def ids
+        Kredis.redis.keys("#{name}:*").map { |id| id.delete_prefix("#{name}:") }
+      end
+
       def where(attrs = {}, &block)
         if block.blank?
           return all if attrs.blank?

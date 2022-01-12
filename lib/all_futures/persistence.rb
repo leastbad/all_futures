@@ -206,6 +206,22 @@ module AllFutures
         end
       end
 
+      def delete_all
+        Kredis.redis.del Kredis.redis.keys("#{name}:*")
+      end
+
+      def delete_by(attributes = {}, &block)
+        Kredis.redis.del where(attributes, &block).map { |record| "#{name}:#{record.id}" }
+      end
+
+      def destroy_all
+        all.each(&:destroy)
+      end
+
+      def destroy_by(attributes = {}, &block)
+        where(attributes, &block).each(&:destroy)
+      end
+
       def readonly_attribute?(name)
         _attr_readonly.include?(name.to_s)
       end
