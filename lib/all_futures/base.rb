@@ -34,7 +34,7 @@ module AllFutures
 
     attr_reader :created_at, :updated_at
 
-    def initialize(attributes = {})
+    def initialize(attributes = {}, &block)
       attributes ||= {}
       attributes = attributes.attributes.transform_keys(&:to_sym) if attributes.is_a?(ActiveRecord::Base)
       attributes_for_super = attributes.key?(:id) ? attributes.except(:id).except(:created_at).except(:updated_at) : attributes
@@ -45,7 +45,6 @@ module AllFutures
         @updated_at = attributes&.fetch(:updated_at, Time.current)
         @redis_key = "#{self.class.name}:#{@id}"
         @new_record = !self.class.exists?(@id)
-
         @destroyed = false
         @previously_new_record = false
         @_versioning_enabled = self.class.versioning
@@ -61,6 +60,8 @@ module AllFutures
           define_singleton_method("restore_#{attr}") { restore_attribute(attr) }
           define_singleton_method("restore_#{attr}!") { restore_attribute(attr) }
         end
+
+        block&.call(self)
       end
     end
 
