@@ -13,6 +13,10 @@ module AllFutures
         block ? all.any?(&block) : all.any?
       end
 
+      def count
+        Kredis.redis.keys("#{name}:*").size
+      end
+
       def exists?(id)
         return all.any? unless id
         return false if id == false
