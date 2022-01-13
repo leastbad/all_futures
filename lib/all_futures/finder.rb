@@ -6,7 +6,9 @@ module AllFutures
 
     module ClassMethods
       def all
-        Kredis.redis.scan_each(match: "#{name}:*").map { |key| find(key.delete_prefix("#{name}:")) }
+        Kredis.redis.scan_each(match: "#{name}:*").map do |key|
+          find(key.delete_prefix("#{name}:"))
+        end.sort_by(&:created_at)
       end
 
       def any?(&block)
@@ -21,6 +23,14 @@ module AllFutures
         return all.any? unless id
         return false if id == false
         [Hash, Array].include?(id.class) ? where(id).any? : Kredis.redis.exists?("#{name}:#{id}")
+      end
+
+      def fifth
+        find_nth 4
+      end
+
+      def fifth!
+        fifth || raise(AllFutures::RecordNotFound.new("Couldn't find #{name} record"))
       end
 
       def find(*ids)
@@ -68,8 +78,101 @@ module AllFutures
         new(attrs, &block)
       end
 
+      def find_sole_by(attrs = {}, &block)
+        found, undesired = where(attrs, &block).first(2)
+
+        if found.nil?
+          raise AllFutures::RecordNotFound.new("Couldn't find #{name} record")
+        elsif undesired.present?
+          raise AllFutures::SoleRecordExceeded.new("Found multiple #{name} records when expecting only one")
+        else
+          found
+        end
+      end
+
+      def first(limit = nil)
+        limit ? all.first(limit) : all.first
+      end
+
+      def first!
+        first || raise(AllFutures::RecordNotFound.new("Couldn't find #{name} record"))
+      end
+
+      def forty_two
+        find_nth 41
+      end
+
+      def forty_two!
+        forty_two || raise(AllFutures::RecordNotFound.new("Couldn't find #{name} record"))
+      end
+
+      def fourth
+        find_nth 3
+      end
+
+      def fourth!
+        fourth || raise(AllFutures::RecordNotFound.new("Couldn't find #{name} record"))
+      end
+
       def ids
         Kredis.redis.keys("#{name}:*").map { |id| id.delete_prefix("#{name}:") }
+      end
+
+      def include?(record)
+        record.is_a?(self) && exists?(record.id)
+      end
+      alias_method :member?, :include?
+
+      def last(limit = nil)
+        limit ? all.last(limit) : all.last
+      end
+
+      def last!
+        last || raise(AllFutures::RecordNotFound.new("Couldn't find #{name} record"))
+      end
+
+      def second
+        find_nth 1
+      end
+
+      def second!
+        second || raise(AllFutures::RecordNotFound.new("Couldn't find #{name} record"))
+      end
+
+      def second_to_last
+        find_nth_from_last 1
+      end
+
+      def second_to_last!
+        second_to_last || raise(AllFutures::RecordNotFound.new("Couldn't find #{name} record"))
+      end
+
+      def sole
+        found, undesired = first(2)
+
+        if found.nil?
+          raise AllFutures::RecordNotFound.new("Couldn't find #{name} record")
+        elsif undesired.present?
+          raise AllFutures::SoleRecordExceeded.new("Found multiple #{name} records when expecting only one")
+        else
+          found
+        end
+      end
+
+      def third
+        find_nth 2
+      end
+
+      def third!
+        third || raise(AllFutures::RecordNotFound.new("Couldn't find #{name} record"))
+      end
+
+      def third_to_last
+        find_nth_from_last 2
+      end
+
+      def third_to_last!
+        third_to_last || raise(AllFutures::RecordNotFound.new("Couldn't find #{name} record"))
       end
 
       def where(attrs = {}, &block)
@@ -91,6 +194,16 @@ module AllFutures
       end
 
       private
+
+      def find_nth(index)
+        records = all
+        records.size >= index ? records[index] : nil
+      end
+
+      def find_nth_from_last(index)
+        records = all.reverse
+        records.size >= index ? records[index] : nil
+      end
 
       def _pretty_attrs(attrs)
         attrs.map { |key, value| "#{key}: #{value}" }.join(", ")
