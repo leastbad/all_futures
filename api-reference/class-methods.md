@@ -18,7 +18,7 @@ Unlike Active Record models, class names are not Relations and are not composabl
 
 #### all
 
-Perform a keyspace scan and return an Array containing all records that have been created.
+Perform a keyspace scan and return an Array containing all records that have been created. Records are sorted in the order of their creation, oldest to newest.
 
 #### any?(\&block)
 
@@ -41,6 +41,10 @@ Pass a Hash of attributes to create an instance of your All Futures model and pe
 If you want to set an `id` for the instance, you will need to pass it in via the Hash; otherwise, a UUID will be assigned as the `id` automatically.
 
 If you pass a block, it will be called after the record is initialized and before it is saved.
+
+#### count
+
+Return an Integer reporting the total number of records stored in Redis. A keyspace scan is required.
 
 #### delete\_all
 
