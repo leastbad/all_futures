@@ -24,7 +24,7 @@ module AllFutures
       attributes_for_super = attributes.key?(:id) ? attributes.except(:id).except(:created_at).except(:updated_at) : attributes
 
       super(attributes_for_super) do
-        @id = attributes&.fetch(:id, nil) || SecureRandom.uuid
+        @id = attributes&.fetch(:id, nil) || ULID.generate
         @created_at = Time.current
         @updated_at = attributes&.fetch(:updated_at, Time.current)
         @redis_key = "#{self.class.name}:#{@id}"
