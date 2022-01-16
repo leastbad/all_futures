@@ -149,6 +149,23 @@ module AllFutures
     end
 
     def _save_record
+      if new_record?
+        _reflections.each do |association, reflection|
+          fk = reflection.options.key?(:foreign_key) ? reflection.options[:foreign_key] : "#{model_name.singular}_id"
+          case reflection.macro
+          when :embeds_many
+            send(association.to_sym).each do |record|
+              if record.new_record?
+                record.respond_to?(fk) && record.send("#{fk}=", @id)
+                record.save
+              end
+            end
+          when :embeds_one
+          when :embedded_in
+          end
+        end
+      end
+
       if versioning_enabled?
         if new_record?
           @_current_version = 1
@@ -162,6 +179,7 @@ module AllFutures
           "updated_at" => Time.current
         }
       end
+
       Kredis.json(@redis_key).value = {
         attributes: attributes,
         created_at: created_at,
