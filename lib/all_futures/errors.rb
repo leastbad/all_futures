@@ -3,6 +3,8 @@
 module AllFutures
   class InvalidAttribute < StandardError; end
 
+  class MissingForeignKeyError < StandardError; end
+
   class ParentModelNotSavedYet < StandardError; end
 
   class ReadOnlyRecord < StandardError; end

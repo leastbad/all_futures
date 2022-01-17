@@ -149,20 +149,20 @@ module AllFutures
     end
 
     def _save_record
-      if new_record?
-        _reflections.each do |association, reflection|
-          fk = reflection.options.key?(:foreign_key) ? reflection.options[:foreign_key] : "#{model_name.singular}_id"
-          case reflection.macro
-          when :embeds_many
-            send(association.to_sym).each do |record|
-              if record.new_record?
-                record.respond_to?(fk) && record.send("#{fk}=", @id)
-                record.save
-              end
+      _reflections.each do |association, reflection|
+        case reflection.macro
+        when :embeds_many
+          fk = model_name.singular + "_id"
+          _raise_missing_foreign_key_error(reflection, fk) unless reflection.klass.has_attribute?(fk)
+          send(association.to_sym).each do |record|
+            if record.new_record?
+              record.send("#{fk}=", @id)
+              record.save
             end
-          when :embeds_one
-          when :embedded_in
+            record.destroy if record.marked_for_destruction?
           end
+          # when :embeds_one
+          # when :embedded_in
         end
       end
 
@@ -188,6 +188,10 @@ module AllFutures
         current_version: current_version,
         versions: versions
       }
+    end
+
+    def _raise_missing_foreign_key_error(reflection, fk)
+      raise AllFutures::MissingForeignKeyError, "#{reflection.klass} missing foreign key #{fk}"
     end
 
     def _raise_readonly_attribute_error(attribute)
