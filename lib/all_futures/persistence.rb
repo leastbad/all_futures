@@ -154,14 +154,23 @@ module AllFutures
         when :embeds_many
           fk = model_name.singular + "_id"
           _raise_missing_foreign_key_error(reflection, fk) unless reflection.klass.has_attribute?(fk)
-          send(association.to_sym).each do |record|
+          send(association).each do |record|
             if record.new_record?
               record.send("#{fk}=", @id)
               record.save
             end
             record.destroy if record.marked_for_destruction?
           end
-          # when :embeds_one
+        when :embeds_one
+          fk = model_name.singular + "_id"
+          _raise_missing_foreign_key_error(reflection, fk) unless reflection.klass.has_attribute?(fk)
+          if (record = send(association))
+            if record.new_record?
+              record.send("#{fk}=", @id)
+              record.save
+            end
+            record.destroy if record.marked_for_destruction?
+          end
           # when :embedded_in
         end
       end
