@@ -171,7 +171,10 @@ module AllFutures
             end
             record.destroy if record.marked_for_destruction?
           end
-          # when :embedded_in
+        when :embedded_in
+          if (record = send(association))
+            record.save if record.new_record? && send(reflection.klass.model_name.singular + "_id").nil?
+          end
         end
       end
 
