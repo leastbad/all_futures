@@ -11,6 +11,7 @@ module AllFutures
     include ::AllFutures::Presenter
     include ::AllFutures::Versions
     include ::AllFutures::Finder
+    include ::AllFutures::Embeds
     include ::ActiveModel::Conversion
     include ::ActiveModel::SecurePassword
     include ::ActiveRecord::Integration
