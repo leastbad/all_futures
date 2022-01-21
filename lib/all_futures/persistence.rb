@@ -152,7 +152,7 @@ module AllFutures
       _reflections.each do |association, reflection|
         case reflection.macro
         when :embeds_many
-          fk = model_name.singular + "_id"
+          fk = reflection.options[:foreign_key]
           _raise_missing_foreign_key_error(reflection, fk) unless reflection.klass.has_attribute?(fk)
           send(association).each do |record|
             if record.new_record?
@@ -162,7 +162,7 @@ module AllFutures
             record.destroy if record.marked_for_destruction?
           end
         when :embeds_one
-          fk = model_name.singular + "_id"
+          fk = reflection.options[:foreign_key]
           _raise_missing_foreign_key_error(reflection, fk) unless reflection.klass.has_attribute?(fk)
           if (record = send(association))
             if record.new_record?
@@ -173,7 +173,7 @@ module AllFutures
           end
         when :embedded_in
           if (record = send(association))
-            record.save if record.new_record? && send(reflection.klass.model_name.singular + "_id").nil?
+            record.save if record.new_record? && send(reflection.options[:foreign_key]).nil?
           end
         end
       end
