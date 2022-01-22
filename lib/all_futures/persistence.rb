@@ -152,21 +152,19 @@ module AllFutures
       _reflections.each do |association, reflection|
         case reflection.macro
         when :embeds_many
-          fk = reflection.options[:foreign_key]
-          _raise_missing_foreign_key_error(reflection, fk) unless reflection.klass.has_attribute?(fk)
+          _raise_missing_foreign_key_error(reflection) unless reflection.klass.has_attribute?(reflection.options[:foreign_key])
           send(association).each do |record|
             if record.new_record?
-              record.send("#{fk}=", @id)
+              record.send("#{reflection.options[:foreign_key]}=", @id)
               record.save
             end
             record.destroy if record.marked_for_destruction?
           end
         when :embeds_one
-          fk = reflection.options[:foreign_key]
-          _raise_missing_foreign_key_error(reflection, fk) unless reflection.klass.has_attribute?(fk)
+          _raise_missing_foreign_key_error(reflection) unless reflection.klass.has_attribute?(reflection.options[:foreign_key])
           if (record = send(association))
             if record.new_record?
-              record.send("#{fk}=", @id)
+              record.send("#{reflection.options[:foreign_key]}=", @id)
               record.save
             end
             record.destroy if record.marked_for_destruction?
@@ -202,8 +200,8 @@ module AllFutures
       }
     end
 
-    def _raise_missing_foreign_key_error(reflection, fk)
-      raise AllFutures::MissingForeignKeyError, "#{reflection.klass} missing foreign key #{fk}"
+    def _raise_missing_foreign_key_error(reflection)
+      raise AllFutures::MissingForeignKeyError, "#{reflection.klass} missing foreign key #{reflection.options[:foreign_key]}"
     end
 
     def _raise_readonly_attribute_error(attribute)
