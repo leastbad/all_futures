@@ -41,6 +41,7 @@ module AllFutures
       changes.any?
     end
     alias_method :changed_attributes?, :dirty?
+    alias_method :has_changes_to_save?, :dirty?
 
     def previous_attributes
       attribute_names.each_with_object({}) do |attribute, hash|

@@ -73,6 +73,8 @@ module AllFutures
       end
       instance_variable_set "@mutations_from_database", ActiveModel::NullMutationTracker.instance
       instance_variable_set "@updated_at", Time.zone.parse(record["updated_at"])
+      instance_variable_set "@marked_for_destruction", false
+      instance_variable_set "@destroyed_by_association", nil
       self.class.send(:set_previous_attributes, self, record)
       self
     end
@@ -149,32 +151,7 @@ module AllFutures
     end
 
     def _save_record
-      _reflections.each do |association, reflection|
-        case reflection.macro
-        when :embeds_many
-          _raise_missing_foreign_key_error(reflection) unless reflection.klass.has_attribute?(reflection.options[:foreign_key])
-          send(association).each do |record|
-            if record.new_record?
-              record.send("#{reflection.options[:foreign_key]}=", @id)
-              record.save
-            end
-            record.destroy if record.marked_for_destruction?
-          end
-        when :embeds_one
-          _raise_missing_foreign_key_error(reflection) unless reflection.klass.has_attribute?(reflection.options[:foreign_key])
-          if (record = send(association))
-            if record.new_record?
-              record.send("#{reflection.options[:foreign_key]}=", @id)
-              record.save
-            end
-            record.destroy if record.marked_for_destruction?
-          end
-        when :embedded_in
-          if (record = send(association))
-            record.save if record.new_record? && send(reflection.options[:foreign_key]).nil?
-          end
-        end
-      end
+      _save_embeds if _reflections.any?
 
       if versioning_enabled?
         if new_record?
@@ -198,6 +175,40 @@ module AllFutures
         current_version: current_version,
         versions: versions
       }
+    end
+
+    def _save_embeds
+      _reflections.each do |embed, reflection|
+        send("_save_#{embed.macro}", embed, reflection)
+      end
+    end
+
+    def _save_embeds_many(embed, reflection)
+      _raise_missing_foreign_key_error(reflection) unless reflection.klass.has_attribute?(reflection.options[:foreign_key])
+      send(embed).each do |record|
+        if record.new_record?
+          record.send("#{reflection.options[:foreign_key]}=", @id)
+          record.save
+        end
+        record.destroy if record.marked_for_destruction?
+      end
+    end
+
+    def _save_embeds_one(embed, reflection)
+      _raise_missing_foreign_key_error(reflection) unless reflection.klass.has_attribute?(reflection.options[:foreign_key])
+      if (record = send(embed))
+        if record.new_record?
+          record.send("#{reflection.options[:foreign_key]}=", @id)
+          record.save
+        end
+        record.destroy if record.marked_for_destruction?
+      end
+    end
+
+    def _save_embedded_in(embed, reflection)
+      if (record = send(embed))
+        record.save if record.new_record? && send(reflection.options[:foreign_key]).nil?
+      end
     end
 
     def _raise_missing_foreign_key_error(reflection)
