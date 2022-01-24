@@ -80,13 +80,13 @@ module AllFutures
     end
 
     def save
-      create_or_update
+      _create_or_update
     rescue AllFutures::RecordInvalid
       false
     end
 
     def save!
-      create_or_update || _raise_record_not_saved_error
+      _create_or_update || _raise_record_not_saved_error
     end
 
     def toggle(attribute)
@@ -127,7 +127,11 @@ module AllFutures
 
     private
 
-    def create_or_update
+    def _changed_for_autosave?
+      new_record? || has_changes_to_save? || marked_for_destruction? || _nested_records_changed_for_autosave?
+    end
+
+    def _create_or_update
       _raise_readonly_record_error if readonly?
       attributes.each_key { |attribute| _raise_readonly_attribute_error(attribute) if attr_readonly_enabled? && readonly_attribute?(attribute) && attribute_will_change?(attribute) }
       return false if destroyed?
@@ -148,6 +152,22 @@ module AllFutures
 
     def _delete_record
       Kredis.redis.del(@redis_key)
+    end
+
+    def _nested_records_changed_for_autosave?
+      @_nested_records_changed_for_autosave_already_called ||= false
+      return false if @_nested_records_changed_for_autosave_already_called
+      begin
+        @_nested_records_changed_for_autosave_already_called = true
+        _reflections.values.any? do |reflection|
+          if reflection.options[:autosave]
+            embed = _reflections[reflection.name]
+            embed && Array.wrap(embed.target).any?(&:_changed_for_autosave?)
+          end
+        end
+      ensure
+        @_nested_records_changed_for_autosave_already_called = false
+      end
     end
 
     def _save_record
