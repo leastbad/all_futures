@@ -161,8 +161,8 @@ module AllFutures
         @_nested_records_changed_for_autosave_already_called = true
         _reflections.values.any? do |reflection|
           if reflection.options[:autosave]
-            embed = _reflections[reflection.name]
-            embed && Array.wrap(embed.target).any?(&:_changed_for_autosave?)
+            association = association_instance_get(reflection.name)
+            association && Array.wrap(association.target).any?(&:_changed_for_autosave?)
           end
         end
       ensure
