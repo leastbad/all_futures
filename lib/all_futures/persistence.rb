@@ -170,33 +170,6 @@ module AllFutures
       end
     end
 
-    def _save_record
-      _save_embeds if _reflections.any?
-
-      if versioning_enabled?
-        if new_record?
-          @_current_version = 1
-        else
-          record = Kredis.json(@redis_key).value
-          @_current_version = record["current_version"] + 1
-          @_versions = record["versions"].transform_keys(&:to_i)
-        end
-        @_versions[current_version] = {
-          "attributes" => attributes,
-          "updated_at" => Time.current
-        }
-      end
-
-      Kredis.json(@redis_key).value = {
-        attributes: attributes,
-        created_at: created_at,
-        updated_at: touch,
-        previous_attributes: previous_attributes,
-        current_version: current_version,
-        versions: versions
-      }
-    end
-
     def _save_embeds
       _reflections.each do |embed, reflection|
         send("_save_#{embed.macro}", embed, reflection)
@@ -229,6 +202,34 @@ module AllFutures
       if (record = send(embed))
         record.save if record.new_record? && send(reflection.options[:foreign_key]).nil?
       end
+    end
+
+    def _save_record
+      _save_embeds if _reflections.any?
+      _save_version if versioning_enabled?
+
+      Kredis.json(@redis_key).value = {
+        attributes: attributes,
+        created_at: created_at,
+        updated_at: touch,
+        previous_attributes: previous_attributes,
+        current_version: current_version,
+        versions: versions
+      }
+    end
+
+    def _save_version
+      if new_record?
+        @_current_version = 1
+      else
+        record = Kredis.json(@redis_key).value
+        @_current_version = record["current_version"] + 1
+        @_versions = record["versions"].transform_keys(&:to_i)
+      end
+      @_versions[current_version] = {
+        "attributes" => attributes,
+        "updated_at" => Time.current
+      }
     end
 
     def _raise_missing_foreign_key_error(reflection)
