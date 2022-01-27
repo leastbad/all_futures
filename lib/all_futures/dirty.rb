@@ -14,6 +14,7 @@ module AllFutures
       changes.key? attribute.to_s
     end
     alias_method :attribute_will_change?, :attribute_changed?
+    alias_method :will_save_change_to_attribute?, :attribute_changed?
 
     def attribute_changed!(attribute)
       _raise_unknown_attribute_error(attribute) unless attributes.key?(attribute.to_s)
