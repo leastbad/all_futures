@@ -20,12 +20,14 @@ module AllFutures
 
     def destroy
       _raise_readonly_record_error if readonly?
+      destroy_associations
       delete
     end
 
     def destroy!
       _raise_readonly_record_error if readonly?
-      _raise_record_not_destroyed_error unless _delete_record > 0
+      destroy_associations
+      _raise_record_not_destroyed_error if persisted? && _delete_record == 0
       @destroyed = true
       freeze
     end

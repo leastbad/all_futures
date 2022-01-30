@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "active_entity/railtie"
+require "active_entity/associations/embeds/association"
 require "active_record/errors"
 require "active_record/integration"
 require "kredis"
