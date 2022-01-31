@@ -71,7 +71,7 @@ module ActiveEntity
 
         def initialize_attributes(record, attributes = {}) #:nodoc:
           record.assign_attributes attributes if attributes.any?
-          record._write_attribute(reflection.options[:foreign_key], owner.id)
+          record._write_attribute(reflection.options[:foreign_key], owner.id) if owner.is_a?(AllFutures::Base)
           set_inverse_instance(record)
         end
 
