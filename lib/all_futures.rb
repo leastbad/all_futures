@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 require "active_entity/railtie"
-require "active_entity/associations/embeds/association"
 require "active_record/errors"
 require "active_record/integration"
 require "kredis"
 require "ulid"
+require "all_futures/association"
 require "all_futures/attributes"
 require "all_futures/callbacks"
 require "all_futures/dirty"
