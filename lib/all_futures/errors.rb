@@ -1,7 +1,19 @@
 # frozen_string_literal: true
 
 module AllFutures
+  class DeleteRestrictionError < StandardError
+    def initialize(name = nil)
+      if name
+        super("Cannot delete record because of dependent #{name}")
+      else
+        super("Delete restriction error.")
+      end
+    end
+  end
+
   class InvalidAttribute < StandardError; end
+
+  class InvalidDependentOption < StandardError; end
 
   class MissingForeignKeyError < StandardError; end
 
