@@ -14,19 +14,19 @@ module AllFutures
 
     def delete
       _delete_record if persisted?
+      _destroy_associations
       @destroyed = true
       freeze
     end
 
     def destroy
       _raise_readonly_record_error if readonly?
-      destroy_associations
       delete
     end
 
     def destroy!
       _raise_readonly_record_error if readonly?
-      destroy_associations
+      _destroy_associations
       _raise_record_not_destroyed_error if persisted? && _delete_record == 0
       @destroyed = true
       freeze
@@ -224,6 +224,38 @@ module AllFutures
 
     def _delete_record
       Kredis.redis.del(@redis_key)
+    end
+
+    def _destroy_associations
+      _reflections.values.each do |reflection|
+        if reflection.options[:dependent]
+          association = association_instance_get(reflection.name)
+          case reflection.options[:dependent]
+          when :delete
+            Array.wrap(association.target).each(&:delete)
+          when :destroy
+            Array.wrap(association.target).each do |record|
+              record.destroyed_by_association = reflection
+              record.destroy
+            end
+          when :nullify
+            raise AllFutures::InvalidDependentOption.new(:nullify) if reflection.macro == :embedded_in
+            association.target.each do |record|
+              record.update_attribute(reflection.options[:foreign_key], nil) if association.target.persisted?
+            end
+          when :restrict_with_exception
+            raise AllFutures::InvalidDependentOption.new(:restrict_with_exception) if reflection.macro == :embedded_in
+            raise AllFutures::DeleteRestrictionError.new(reflection.name) unless association.empty?
+          when :restrict_with_error
+            raise AllFutures::InvalidDependentOption.new(:restrict_with_error) if reflection.macro == :embedded_in
+            unless association.empty?
+              record = association.owner.class.human_attribute_name(reflection.name).downcase
+              association.owner.errors.add(:base, :"restrict_dependent_destroy.#{reflection.macro}", record: record)
+              throw(:abort)
+            end
+          end
+        end
+      end
     end
 
     def _record_changed?(reflection, record, key)
