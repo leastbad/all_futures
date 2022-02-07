@@ -26,8 +26,8 @@ module AllFutures
 
       super(attributes_for_super) do
         @id = attributes&.fetch(:id, nil) || ULID.generate
-        @created_at = Time.current.utc.to_s
-        @updated_at = attributes&.fetch(:updated_at, Time.current.utc.to_s)
+        @created_at = Time.current
+        @updated_at = attributes&.fetch(:updated_at, Time.current)
         @redis_key = "#{self.class.name}:#{@id}"
         @new_record = !self.class.exists?(@id)
         @destroyed = false

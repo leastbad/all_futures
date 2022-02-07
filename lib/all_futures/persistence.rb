@@ -124,7 +124,7 @@ module AllFutures
     end
 
     def touch
-      @updated_at = Time.current.utc.to_s
+      @updated_at = Time.current
     end
 
     # treat as private
@@ -368,28 +368,21 @@ module AllFutures
       end
       @_versions[current_version] = {
         "attributes" => attributes,
-        "updated_at" => Time.current.utc.to_s
+        "updated_at" => Time.current
       }
     end
 
     def _snapshot
       {
-        attributes: attributes.transform_values do |value|
-          case value
-          when ActiveSupport::TimeWithZone
-            value.utc.to_s
-          when Date
-            value.to_s
-          else
-            value
-          end
-        end,
+        attributes: attributes,
         created_at: created_at,
         updated_at: @updated_at,
         previous_attributes: previous_attributes,
         current_version: current_version,
         versions: versions
-      }.deep_transform_keys(&:to_sym)
+      }.deep_transform_keys do |key|
+        key.is_a?(Integer) ? key : key.to_sym
+      end
     end
 
     def _raise_missing_foreign_key_error(reflection)
@@ -469,6 +462,14 @@ module AllFutures
       def load_model(id)
         record = Kredis.json("#{name}:#{id}").value
         raise AllFutures::RecordNotFound.new("Couldn't find #{name} with id #{id}") unless record
+        attribute_names.each do |attribute|
+          case attribute_types[attribute]
+          when ActiveEntity::Type::Date
+            record[attribute] = Date.parse(record[attribute]) if record[attribute]
+          when ActiveEntity::Type::DateTime, ActiveEntity::Type::Time
+            record[attribute] = Time.zone.parse(record[attribute]) if record[attribute]
+          end
+        end
         record
       end
     end
