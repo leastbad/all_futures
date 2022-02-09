@@ -7,6 +7,7 @@ require "all_futures"
 require "minitest/autorun"
 require "minitest/spec"
 require "active_record"
+require "warning"
 
 Time.zone = "UTC"
 
@@ -17,3 +18,6 @@ Kredis.configurator = Class.new {
     {db: "1"}
   end
 }.new
+
+# suppress Active Entity class eval warnings for test runner
+Warning.ignore(:method_redefined)
