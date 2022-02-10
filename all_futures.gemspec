@@ -30,4 +30,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "ruby_jard", "~> 0.3"
   gem.add_development_dependency "standardrb", "~> 1.0"
   gem.add_development_dependency "warning", "~> 1.0"
+  gem.add_development_dependency "faker", "~> 2.20"
 end

@@ -8,6 +8,7 @@ require "minitest/autorun"
 require "minitest/spec"
 require "active_record"
 require "warning"
+require "faker"
 
 Time.zone = "UTC"
 
