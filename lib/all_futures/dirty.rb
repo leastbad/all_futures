@@ -103,7 +103,7 @@ module AllFutures
         previous_values = tracker.instance_variable_get("@attributes").instance_variable_get("@attributes")
         previous_values.each do |key, attribute|
           original = attribute.instance_variable_get("@original_attribute")
-          original.instance_variable_set "@value_before_type_cast", record["previous_attributes"][key]
+          original.instance_variable_set("@value_before_type_cast", record["previous_attributes"][key]) unless original.nil?
         end
         model.instance_variable_set "@mutations_before_last_save", tracker
       end
