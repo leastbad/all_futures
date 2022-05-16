@@ -149,6 +149,35 @@ module AllFutures
     end
 
     def _save_record
+      _reflections.each do |association, reflection|
+        case reflection.macro
+        when :embeds_many
+          fk = model_name.singular + "_id"
+          _raise_missing_foreign_key_error(reflection, fk) unless reflection.klass.has_attribute?(fk)
+          send(association).each do |record|
+            if record.new_record?
+              record.send("#{fk}=", @id)
+              record.save
+            end
+            record.destroy if record.marked_for_destruction?
+          end
+        when :embeds_one
+          fk = model_name.singular + "_id"
+          _raise_missing_foreign_key_error(reflection, fk) unless reflection.klass.has_attribute?(fk)
+          if (record = send(association))
+            if record.new_record?
+              record.send("#{fk}=", @id)
+              record.save
+            end
+            record.destroy if record.marked_for_destruction?
+          end
+        when :embedded_in
+          if (record = send(association))
+            record.save if record.new_record? && send(reflection.klass.model_name.singular + "_id").nil?
+          end
+        end
+      end
+
       if versioning_enabled?
         if new_record?
           @_current_version = 1
@@ -162,6 +191,7 @@ module AllFutures
           "updated_at" => Time.current
         }
       end
+
       Kredis.json(@redis_key).value = {
         attributes: attributes,
         created_at: created_at,
@@ -170,6 +200,10 @@ module AllFutures
         current_version: current_version,
         versions: versions
       }
+    end
+
+    def _raise_missing_foreign_key_error(reflection, fk)
+      raise AllFutures::MissingForeignKeyError, "#{reflection.klass} missing foreign key #{fk}"
     end
 
     def _raise_readonly_attribute_error(attribute)
