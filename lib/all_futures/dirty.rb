@@ -6,7 +6,7 @@ module AllFutures
 
     def attribute_change(attribute)
       _raise_unknown_attribute_error(attribute) unless attributes.key?(attribute.to_s)
-      attribute_was(attribute) == self[attribute] ? nil : [attribute_was(attribute), self[attribute]]
+      (attribute_was(attribute) == self[attribute]) ? nil : [attribute_was(attribute), self[attribute]]
     end
 
     def attribute_changed?(attribute)
@@ -77,7 +77,8 @@ module AllFutures
 
     def rollback_attribute!(attribute)
       _raise_unknown_attribute_error(attribute) unless attributes.key?(attribute.to_s)
-      rollback_attribute(attribute)
+      # unlike rollback_attribute, keep the mutation tracked so save sees a dirty record
+      self[attribute] = attribute_previously_was(attribute) if self[attribute] != attribute_previously_was(attribute)
       save
     end
 
@@ -86,7 +87,8 @@ module AllFutures
     end
 
     def rollback_attributes!(attr_names = changed)
-      rollback_attributes(attr_names)
+      attr_names.each { |attribute| _raise_unknown_attribute_error(attribute) unless attributes.key?(attribute.to_s) }
+      attr_names.each { |attribute| self[attribute] = attribute_previously_was(attribute) if self[attribute] != attribute_previously_was(attribute) }
       save
     end
 
@@ -101,13 +103,13 @@ module AllFutures
 
     module ClassMethods
       def set_previous_attributes(model, record)
-        tracker = ActiveModel::AttributeMutationTracker.new(model.instance_variable_get("@attributes"))
-        previous_values = tracker.instance_variable_get("@attributes").instance_variable_get("@attributes")
+        tracker = ActiveModel::AttributeMutationTracker.new(model.instance_variable_get(:@attributes))
+        previous_values = tracker.instance_variable_get(:@attributes).instance_variable_get(:@attributes)
         previous_values.each do |key, attribute|
-          original = attribute.instance_variable_get("@original_attribute")
-          original.instance_variable_set("@value_before_type_cast", record["previous_attributes"][key]) unless original.nil?
+          original = attribute.instance_variable_get(:@original_attribute)
+          original&.instance_variable_set(:@value_before_type_cast, record["previous_attributes"][key])
         end
-        model.instance_variable_set "@mutations_before_last_save", tracker
+        model.instance_variable_set :@mutations_before_last_save, tracker
       end
     end
   end

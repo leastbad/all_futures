@@ -2,7 +2,7 @@
 
 require "test_helper"
 
-# rubocop:disable Lint/ConstantDefinitionInBlock:
+# rubocop:disable Lint/ConstantDefinitionInBlock
 describe AllFutures::Association do
   it "allows creation of an embeds_one association" do
     class Government < AllFutures::Base
@@ -46,4 +46,4 @@ describe AllFutures::Association do
     assert_equal government.id, government.spies[1].government_id
   end
 end
-# rubocop:enable Lint/ConstantDefinitionInBlock:
+# rubocop:enable Lint/ConstantDefinitionInBlock

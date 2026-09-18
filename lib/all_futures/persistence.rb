@@ -73,10 +73,10 @@ module AllFutures
         @_current_version = record["current_version"]
         @_versions = record["versions"].transform_keys(&:to_i)
       end
-      instance_variable_set "@mutations_from_database", ActiveModel::NullMutationTracker.instance
-      instance_variable_set "@updated_at", Time.zone.parse(record["updated_at"])
-      instance_variable_set "@marked_for_destruction", false
-      instance_variable_set "@destroyed_by_association", nil
+      changes_applied # reloaded values are not user-supplied changes; keeps future dirty tracking alive
+      instance_variable_set :@updated_at, Time.zone.parse(record["updated_at"])
+      instance_variable_set :@marked_for_destruction, false
+      instance_variable_set :@destroyed_by_association, nil
       self.class.send(:set_previous_attributes, self, record)
       self
     end
@@ -189,7 +189,9 @@ module AllFutures
       attributes.each_key { |attribute| _raise_readonly_attribute_error(attribute) if attr_readonly_enabled? && readonly_attribute?(attribute) && attribute_will_change?(attribute) }
       return false if destroyed?
 
-      touch
+      # capture before changes_applied resets dirty tracking; _save_record uses
+      # this to skip the Redis write (and version bump) when nothing changed
+      @_pending_write = new_record? || dirty?
 
       changes_applied
 
@@ -197,7 +199,7 @@ module AllFutures
       @new_record_before_save = !previously_new_record_before_save && new_record?
 
       _reflections.values.select { |reflection| reflection.macro == :embedded_in }.each do |reflection|
-        send("_save_embedded_in", reflection)
+        send(:_save_embedded_in, reflection)
       end
 
       result = new_record? ? _create_record : _update_record
@@ -350,13 +352,12 @@ module AllFutures
     end
 
     def _save_record
-      return true if Kredis.redis.exists?(@redis_key) && self.class.send(:load_model, id) == _snapshot
+      return true unless @_pending_write
 
-      if dirty? || new_record?
-        _save_version if versioning_enabled?
-        touch
-        Kredis.json(@redis_key).value = _snapshot
-      end
+      _save_version if versioning_enabled?
+      touch
+      Kredis.json(@redis_key).value = _snapshot
+      true
     end
 
     def _save_version
@@ -364,7 +365,7 @@ module AllFutures
         @_current_version = 1
       else
         record = Kredis.json(@redis_key).value
-        _raise_record_stale_error if record["current_version"] != @_current_version
+        _raise_record_stale_error if record&.dig("current_version") != @_current_version
         @_current_version = @_current_version ? @_current_version.next : 1
       end
       @_versions[current_version] = {

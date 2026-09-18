@@ -23,7 +23,7 @@ module AllFutures
     end
 
     def current_version
-      @_current_version.nil? ? nil : @_current_version.to_i
+      @_current_version&.to_i
     end
 
     def disable_versioning!
@@ -72,8 +72,8 @@ module AllFutures
 
       def load_versions(model, record)
         return if record["versions"].nil?
-        model.instance_variable_set "@_current_version", record["current_version"]
-        model.instance_variable_set "@_versions", record["versions"].transform_keys(&:to_i)
+        model.instance_variable_set :@_current_version, record["current_version"]
+        model.instance_variable_set :@_versions, record["versions"].transform_keys(&:to_i)
       end
     end
   end

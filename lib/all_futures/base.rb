@@ -51,7 +51,7 @@ module AllFutures
     end
 
     def id
-      !new_record? || @_id_set ? @id.to_s : nil
+      (!new_record? || @_id_set) ? @id.to_s : nil
     end
 
     def id=(value)

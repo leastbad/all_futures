@@ -38,10 +38,11 @@ module AllFutures
         if ids.size == 1 && [String, Integer, Symbol].include?(ids.first.class)
           record = load_model(ids.first)
           model = new record["attributes"].merge(id: ids.first)
+          model.changes_applied # loaded values are not user-supplied changes
           load_versions(model, record)
           set_previous_attributes(model, record)
-          model.instance_variable_set "@created_at", Time.zone.parse(record["created_at"])
-          model.instance_variable_set "@updated_at", Time.zone.parse(record["updated_at"])
+          model.instance_variable_set :@created_at, Time.zone.parse(record["created_at"])
+          model.instance_variable_set :@updated_at, Time.zone.parse(record["updated_at"])
           model
         else
           results = ids.flatten.map do |id|
@@ -197,12 +198,12 @@ module AllFutures
 
       def find_nth(index)
         records = all
-        records.size >= index ? records[index] : nil
+        (records.size >= index) ? records[index] : nil
       end
 
       def find_nth_from_last(index)
         records = all.reverse
-        records.size >= index ? records[index] : nil
+        (records.size >= index) ? records[index] : nil
       end
 
       def _pretty_attrs(attrs)

@@ -2,7 +2,7 @@
 
 require "test_helper"
 
-# rubocop:disable Lint/ConstantDefinitionInBlock:
+# rubocop:disable Lint/ConstantDefinitionInBlock
 describe AllFutures::Callbacks do
   # save callbacks
 
@@ -19,7 +19,7 @@ describe AllFutures::Callbacks do
 
     future = BeforeSaveCallback.new
     future.save
-    assert_equal 5, future.instance_variable_get("@count")
+    assert_equal 5, future.instance_variable_get(:@count)
   end
 
   it "before_save with block works" do
@@ -31,7 +31,7 @@ describe AllFutures::Callbacks do
 
     future = BeforeSaveBlockCallback.new
     future.save
-    assert_equal 10, future.instance_variable_get("@count")
+    assert_equal 10, future.instance_variable_get(:@count)
   end
 
   it "basic after_save works" do
@@ -47,7 +47,7 @@ describe AllFutures::Callbacks do
 
     future = AfterSaveCallback.new
     future.save
-    assert_equal 15, future.instance_variable_get("@count")
+    assert_equal 15, future.instance_variable_get(:@count)
   end
 
   it "after_save with block works" do
@@ -59,7 +59,7 @@ describe AllFutures::Callbacks do
 
     future = AfterSaveBlockCallback.new
     future.save
-    assert_equal 20, future.instance_variable_get("@count")
+    assert_equal 20, future.instance_variable_get(:@count)
   end
 
   # update callbacks
@@ -78,7 +78,7 @@ describe AllFutures::Callbacks do
 
     future = BeforeUpdateCallback.new
     future.update foo: true
-    assert_equal 25, future.instance_variable_get("@count")
+    assert_equal 25, future.instance_variable_get(:@count)
   end
 
   it "before_update with block works" do
@@ -92,7 +92,7 @@ describe AllFutures::Callbacks do
 
     future = BeforeUpdateBlockCallback.new
     future.update foo: true
-    assert_equal 30, future.instance_variable_get("@count")
+    assert_equal 30, future.instance_variable_get(:@count)
   end
 
   it "basic after_update works" do
@@ -109,7 +109,7 @@ describe AllFutures::Callbacks do
 
     future = AfterUpdateCallback.new
     future.update foo: true
-    assert_equal 35, future.instance_variable_get("@count")
+    assert_equal 35, future.instance_variable_get(:@count)
   end
 
   it "after_update with block works" do
@@ -123,7 +123,7 @@ describe AllFutures::Callbacks do
 
     future = AfterUpdateBlockCallback.new
     future.update foo: true
-    assert_equal 40, future.instance_variable_get("@count")
+    assert_equal 40, future.instance_variable_get(:@count)
   end
 
   # destroy callbacks
@@ -141,7 +141,7 @@ describe AllFutures::Callbacks do
 
     future = BeforeDestroyCallback.new
     future.destroy
-    assert_equal 45, future.instance_variable_get("@count")
+    assert_equal 45, future.instance_variable_get(:@count)
   end
 
   it "before_destroy with block works" do
@@ -153,7 +153,7 @@ describe AllFutures::Callbacks do
 
     future = BeforeDestroyBlockCallback.new
     future.destroy
-    assert_equal 50, future.instance_variable_get("@count")
+    assert_equal 50, future.instance_variable_get(:@count)
   end
 
   it "basic after_destroy works" do
@@ -169,7 +169,7 @@ describe AllFutures::Callbacks do
 
     future = AfterDestroyCallback.new
     future.destroy
-    assert_equal 55, future.instance_variable_get("@count")
+    assert_equal 55, future.instance_variable_get(:@count)
   end
 
   it "after_destroy with block works" do
@@ -181,7 +181,7 @@ describe AllFutures::Callbacks do
 
     future = AfterDestroyBlockCallback.new
     future.destroy
-    assert_equal 60, future.instance_variable_get("@count")
+    assert_equal 60, future.instance_variable_get(:@count)
   end
 end
-# rubocop:enable Lint/ConstantDefinitionInBlock:
+# rubocop:enable Lint/ConstantDefinitionInBlock
