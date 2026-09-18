@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=https://api.gitbook.com/gitbook-docs.yaml
+
+site:
+  title: All Futures
+  structure:
+    - type: space
+      key: space-docs
+      title: All Futures
+      path: docs
+      default: true
+      content:
+        directory: ./
