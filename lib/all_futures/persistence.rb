@@ -282,20 +282,21 @@ module AllFutures
             next if record.destroyed?
 
             saved = true
-
             if autosave != false && (new_record_before_save || record.new_record?)
               association.set_inverse_instance(record)
 
-              if autosave
-                record._write_attribute(reflection.options[:foreign_key], id)
-                saved = record.save
-              elsif !reflection.nested?
-                record._write_attribute(reflection.options[:foreign_key], id)
-                association_saved = record.save
+              record.without_versioning do
+                if autosave
+                  record._write_attribute(reflection.options[:foreign_key], id)
+                  saved = record.save
+                elsif !reflection.nested?
+                  record._write_attribute(reflection.options[:foreign_key], id)
+                  association_saved = record.save
 
-                if reflection.validate?
-                  errors.add(reflection.name) unless association_saved
-                  saved = association_saved
+                  if reflection.validate?
+                    errors.add(reflection.name) unless association_saved
+                    saved = association_saved
+                  end
                 end
               end
             elsif autosave
@@ -322,7 +323,7 @@ module AllFutures
           if (autosave && record._changed_for_autosave?) || _record_changed?(reflection, record, id)
             record._write_attribute(reflection.options[:foreign_key], id)
             association.set_inverse_instance(record)
-            record.save
+            record.without_versioning { record.save }
           end
         end
       end
@@ -349,9 +350,9 @@ module AllFutures
     end
 
     def _save_record
-      record = Kredis.json(@redis_key).value
+      return true if Kredis.redis.exists?(@redis_key) && self.class.send(:load_model, id) == _snapshot
 
-      if record&.deep_transform_keys(&:to_sym) != _snapshot
+      if dirty? || new_record?
         _save_version if versioning_enabled?
         touch
         Kredis.json(@redis_key).value = _snapshot
@@ -363,8 +364,8 @@ module AllFutures
         @_current_version = 1
       else
         record = Kredis.json(@redis_key).value
-        @_current_version = record["current_version"] + 1
-        @_versions = record["versions"].transform_keys(&:to_i)
+        _raise_record_stale_error if record["current_version"] != @_current_version
+        @_current_version = @_current_version ? @_current_version.next : 1
       end
       @_versions[current_version] = {
         "attributes" => attributes,
@@ -379,10 +380,12 @@ module AllFutures
         updated_at: @updated_at,
         previous_attributes: previous_attributes,
         current_version: current_version,
-        versions: versions
-      }.deep_transform_keys do |key|
-        key.is_a?(Integer) ? key : key.to_sym
-      end
+        versions: versions.transform_keys(&:to_i)
+      }.deep_transform_keys { |key| key.is_a?(Integer) ? key : key.to_sym }
+    end
+
+    def _raise_invalid_attribute_error(attribute)
+      raise AllFutures::InvalidAttribute.new(self, attribute)
     end
 
     def _raise_missing_foreign_key_error(reflection)
@@ -405,8 +408,8 @@ module AllFutures
       raise AllFutures::RecordNotSaved, "Failed to save the record"
     end
 
-    def _raise_invalid_attribute_error(attribute)
-      raise AllFutures::InvalidAttribute.new(self, attribute)
+    def _raise_record_stale_error
+      raise AllFutures::RecordStale, "Failed to save the record because it has been modified by another process"
     end
 
     def _update_record

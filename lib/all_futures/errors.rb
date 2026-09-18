@@ -29,6 +29,8 @@ module AllFutures
 
   class RecordNotSaved < StandardError; end
 
+  class RecordStale < StandardError; end
+
   class SoleRecordExceeded < StandardError; end
 
   class VersionNotFound < StandardError; end
