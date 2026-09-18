@@ -194,7 +194,6 @@ PLATFORMS
 DEPENDENCIES
   activeentity!
   all_futures!
-  connection_pool (< 3)
   faker (~> 2.20)
   magic_frozen_string_literal (~> 1.2.0)
   railties (>= 7.1)
@@ -203,4 +202,4 @@ DEPENDENCIES
   warning (~> 1.0)
 
 BUNDLED WITH
-   2.2.32
+  4.0.21

@@ -13,7 +13,7 @@ class AllFutures::Railtie < ::Rails::Railtie
 
   initializer "all_futures.i18n" do
     ActiveSupport.on_load(:i18n) do
-      I18n.load_path << File.expand_path("all_futures/locale/en.yml", __dir__)
+      I18n.load_path << File.expand_path("locale/en.yml", __dir__)
     end
   end
 end
