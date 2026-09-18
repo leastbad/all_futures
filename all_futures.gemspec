@@ -15,11 +15,10 @@ Gem::Specification.new do |gem|
     "documentation_uri" => "https://allfutures.leastbad.com/"
   }
 
-  gem.files = Dir["lib/**/*.rb", "lib/**/*.yml", "bin/*", "[A-Z]*"]
+  gem.files = Dir["lib/**/*", "bin/*", "[A-Z]*"]
 
   gem.required_ruby_version = ">= 3.1"
 
-  gem.add_dependency "activeentity", "~> 6.3"
   gem.add_dependency "activemodel", ">= 7.1"
   gem.add_dependency "activerecord", ">= 7.1"
   gem.add_dependency "activesupport", ">= 7.1"

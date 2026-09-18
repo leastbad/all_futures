@@ -4,6 +4,3 @@ source "https://rubygems.org"
 
 # Specify your gem's dependencies in all_futures.gemspec
 gemspec
-
-# Local fork of the abandoned activeentity gem, patched for modern Rails
-gem "activeentity", path: "../activeentity"

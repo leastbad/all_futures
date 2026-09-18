@@ -36,7 +36,7 @@ Warning.ignore(:method_redefined)
 Minitest.after_run do
   result = Coverage.result
   lib = File.expand_path("../lib", __dir__)
-  relevant = result.select { |path, _| path.start_with?(lib) }
+  relevant = result.select { |path, _| path.start_with?(lib) && !path.include?("/vendor/") }
   lines_for = ->(data) { data.is_a?(Hash) ? data[:lines] : data }
   covered = relevant.sum { |_, data| Array(lines_for.call(data)).count { |n| n.is_a?(Integer) && n.positive? } }
   measurable = relevant.sum { |_, data| Array(lines_for.call(data)).count { |n| n.is_a?(Integer) } }

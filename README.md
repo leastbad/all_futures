@@ -56,7 +56,7 @@ All Futures presents a flexible and lightweight mechanism to refine a model that
 
 ## How does All Futures work?
 
-All Futures is the fusion of [Active Entity](https://github.com/jasl/activeentity) and [Kredis](https://github.com/rails/kredis). It is similar to using a **properly juiced** [ActiveModel::Model](https://api.rubyonrails.org/classes/ActiveModel/Model.html), except that it has full support for [Attributes](https://api.rubyonrails.org/classes/ActiveRecord/Attributes/ClassMethods.html#method-i-attribute), including arrays and nested attributes. All Futures classes behave like Active Record model instances as much as possible.
+All Futures stands on the shoulders of [Active Entity](https://github.com/jasl/activeentity) (now **vendored** inside this gem — upstream is abandoned) and [Kredis](https://github.com/rails/kredis). It is similar to using a **properly juiced** [ActiveModel::Model](https://api.rubyonrails.org/classes/ActiveModel/Model.html), except that it has full support for [Attributes](https://api.rubyonrails.org/classes/ActiveRecord/Attributes/ClassMethods.html#method-i-attribute), including arrays and nested attributes. All Futures classes behave like Active Record model instances as much as possible.
 
 {% hint style="info" %}
 **v2** needs **Ruby 3.1+** and **Rails 7.1+** (green on 8.1). Coming from 1.0.x? Read [Updating from v1](usage/upgrading.md).

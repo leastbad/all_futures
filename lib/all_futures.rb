@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# Active Entity is vendored under lib/vendor (abandoned upstream; we maintain the fork).
+vendor = File.expand_path("vendor", __dir__)
+$LOAD_PATH.unshift(vendor) unless $LOAD_PATH.include?(vendor)
+
 require "active_entity/railtie"
 require "active_record" # for ActiveRecord::Integration (cache keys) and ActiveRecord::Base checks; internals can't be cherry-picked since Rails 7.1
 require "kredis"
