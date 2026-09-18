@@ -1,4 +1,5 @@
 .vscode
+*.gem
 /.bundle/
 /.yardoc
 /_yardoc/
