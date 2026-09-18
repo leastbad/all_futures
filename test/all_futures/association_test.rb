@@ -45,5 +45,129 @@ describe AllFutures::Association do
     assert_equal government.id, government.spies[0].government_id
     assert_equal government.id, government.spies[1].government_id
   end
+
+  it "destroys children with dependent: :destroy" do
+    class DoomedAgency < AllFutures::Base
+      embeds_many :minions, dependent: :destroy
+    end
+
+    class Minion < AllFutures::Base
+      attribute :doomed_agency_id
+      embedded_in :doomed_agency
+    end
+
+    agency = DoomedAgency.new
+    minion = agency.minions.build
+    agency.save
+
+    assert minion.persisted?
+
+    agency.destroy
+
+    assert minion.destroyed?
+    assert_raises(AllFutures::RecordNotFound) { Minion.find(minion.id) }
+  end
+
+  it "deletes children with dependent: :delete" do
+    class PurgedAgency < AllFutures::Base
+      embeds_many :drones, dependent: :delete
+    end
+
+    class Drone < AllFutures::Base
+      attribute :purged_agency_id
+      embedded_in :purged_agency
+    end
+
+    agency = PurgedAgency.new
+    drone = agency.drones.build
+    agency.save
+
+    agency.destroy
+
+    assert_raises(AllFutures::RecordNotFound) { Drone.find(drone.id) }
+  end
+
+  it "nullifies foreign keys with dependent: :nullify" do
+    class LenientAgency < AllFutures::Base
+      embeds_many :contractors, dependent: :nullify
+    end
+
+    class Contractor < AllFutures::Base
+      attribute :lenient_agency_id
+      embedded_in :lenient_agency
+    end
+
+    agency = LenientAgency.new
+    contractor = agency.contractors.build
+    agency.save
+
+    assert_equal agency.id, contractor.lenient_agency_id
+
+    agency.destroy
+
+    assert_nil Contractor.find(contractor.id).lenient_agency_id
+  end
+
+  it "raises DeleteRestrictionError with dependent: :restrict_with_exception" do
+    class StubbornAgency < AllFutures::Base
+      embeds_many :lifers, dependent: :restrict_with_exception
+    end
+
+    class Lifer < AllFutures::Base
+      attribute :stubborn_agency_id
+      embedded_in :stubborn_agency
+    end
+
+    agency = StubbornAgency.new
+    agency.lifers.build
+    agency.save
+
+    assert_raises(AllFutures::DeleteRestrictionError) { agency.destroy }
+    assert StubbornAgency.find(agency.id)
+  end
+
+  it "aborts destroy and adds errors with dependent: :restrict_with_error" do
+    class CarefulAgency < AllFutures::Base
+      embeds_many :tenants, dependent: :restrict_with_error
+    end
+
+    class Tenant < AllFutures::Base
+      attribute :careful_agency_id
+      embedded_in :careful_agency
+    end
+
+    agency = CarefulAgency.new
+    tenant = agency.tenants.build
+    agency.save
+
+    refute agency.destroy
+    refute agency.destroyed?
+    assert agency.errors[:base].any?
+    assert CarefulAgency.find(agency.id)
+    assert Tenant.find(tenant.id)
+  end
+
+  it "persists changed children on save with autosave: true" do
+    class AutoAgency < AllFutures::Base
+      embeds_many :auto_agents, autosave: true
+    end
+
+    class AutoAgent < AllFutures::Base
+      attribute :auto_agency_id
+      attribute :codename, :string
+      embedded_in :auto_agency
+    end
+
+    agency = AutoAgency.new
+    agent = agency.auto_agents.build(codename: "alpha")
+    agency.save
+
+    assert_equal "alpha", AutoAgent.find(agent.id).codename
+
+    agent.codename = "beta"
+    agency.save
+
+    assert_equal "beta", AutoAgent.find(agent.id).codename
+  end
 end
 # rubocop:enable Lint/ConstantDefinitionInBlock

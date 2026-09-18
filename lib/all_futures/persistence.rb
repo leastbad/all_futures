@@ -13,10 +13,13 @@ module AllFutures
     end
 
     def delete
-      _delete_record if persisted?
-      _destroy_associations
-      @destroyed = true
-      freeze
+      catch(:abort) do
+        _destroy_associations
+        _delete_record if persisted?
+        @destroyed = true
+        return freeze
+      end
+      false
     end
 
     def destroy
@@ -26,10 +29,7 @@ module AllFutures
 
     def destroy!
       _raise_readonly_record_error if readonly?
-      _destroy_associations
-      _raise_record_not_destroyed_error if persisted? && _delete_record == 0
-      @destroyed = true
-      freeze
+      delete || _raise_record_not_destroyed_error
     end
 
     def destroyed?
@@ -232,6 +232,8 @@ module AllFutures
       _reflections.values.each do |reflection|
         if reflection.options[:dependent]
           association = association_instance_get(reflection.name)
+          next unless association
+
           case reflection.options[:dependent]
           when :delete
             Array.wrap(association.target).each(&:delete)
@@ -242,8 +244,8 @@ module AllFutures
             end
           when :nullify
             raise AllFutures::InvalidDependentOption.new(:nullify) if reflection.macro == :embedded_in
-            association.target.each do |record|
-              record.update_attribute(reflection.options[:foreign_key], nil) if association.target.persisted?
+            Array.wrap(association.target).each do |record|
+              record.update_attribute(reflection.options[:foreign_key], nil) if record.persisted?
             end
           when :restrict_with_exception
             raise AllFutures::InvalidDependentOption.new(:restrict_with_exception) if reflection.macro == :embedded_in
