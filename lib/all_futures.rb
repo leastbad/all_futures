@@ -21,7 +21,3 @@ require "all_futures/versions"
 require "all_futures/base"
 
 require "all_futures/railtie" if defined?(Rails::Railtie)
-
-ActiveSupport.on_load(:i18n) do
-  I18n.load_path << File.expand_path("all_futures/locale/en.yml", __dir__)
-end

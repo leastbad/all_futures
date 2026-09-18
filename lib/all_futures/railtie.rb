@@ -10,4 +10,10 @@ class AllFutures::Railtie < ::Rails::Railtie
       include AllFutures::Attributes
     end
   end
+
+  initializer "all_futures.i18n" do
+    ActiveSupport.on_load(:i18n) do
+      I18n.load_path << File.expand_path("all_futures/locale/en.yml", __dir__)
+    end
+  end
 end
