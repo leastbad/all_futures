@@ -8,8 +8,35 @@ module AllFutures
       set_inverse_instance(record)
     end
   end
+
+  module CollectionAssociationHydration
+    def reader
+      AssociationIndex.hydrate(self)
+      super
+    end
+
+    def size
+      AssociationIndex.hydrate(self)
+      super
+    end
+  end
+
+  module SingularAssociationHydration
+    def reader
+      AssociationIndex.hydrate(self)
+      super
+    end
+  end
 end
 
 class ActiveEntity::Associations::Embeds::Association
   prepend AllFutures::Association
+end
+
+class ActiveEntity::Associations::Embeds::CollectionAssociation
+  prepend AllFutures::CollectionAssociationHydration
+end
+
+class ActiveEntity::Associations::Embeds::SingularAssociation
+  prepend AllFutures::SingularAssociationHydration
 end

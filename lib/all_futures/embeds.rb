@@ -12,7 +12,8 @@ module AllFutures
         embeds = super
         embeds[name.to_s].options[:autosave] = autosave
         embeds[name.to_s].options[:dependent] = dependent
-        embeds[name.to_s].options[:foreign_key] = foreign_key || model_name.singular + "_id"
+        # FK lives on the child and points at the parent: government_id, not spy_id
+        embeds[name.to_s].options[:foreign_key] = foreign_key || "#{name}_id"
       end
 
       def embeds_one(name, **options)

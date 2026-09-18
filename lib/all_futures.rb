@@ -5,6 +5,7 @@ require "active_record" # for ActiveRecord::Integration (cache keys) and ActiveR
 require "kredis"
 require "ulid"
 require "all_futures/configuration"
+require "all_futures/association_index"
 require "all_futures/association"
 require "all_futures/attributes"
 require "all_futures/callbacks"

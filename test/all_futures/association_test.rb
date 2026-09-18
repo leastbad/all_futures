@@ -169,5 +169,65 @@ describe AllFutures::Association do
 
     assert_equal "beta", AutoAgent.find(agent.id).codename
   end
+
+  it "rehydrates embeds_many after find" do
+    class IndexedBureau < AllFutures::Base
+      embeds_many :operatives
+    end
+
+    class Operative < AllFutures::Base
+      attribute :indexed_bureau_id
+      attribute :callsign, :string
+      embedded_in :indexed_bureau
+    end
+
+    bureau = IndexedBureau.new
+    bureau.operatives.build(callsign: "fox")
+    bureau.operatives.build(callsign: "viper")
+    bureau.save
+
+    found = IndexedBureau.find(bureau.id)
+    assert_equal 2, found.operatives.size
+    assert_equal ["fox", "viper"].sort, found.operatives.map(&:callsign).sort
+  end
+
+  it "rehydrates embeds_one after find" do
+    class IndexedDesk < AllFutures::Base
+      embeds_one :chief
+    end
+
+    class Chief < AllFutures::Base
+      attribute :indexed_desk_id
+      attribute :title, :string
+      embedded_in :indexed_desk
+    end
+
+    desk = IndexedDesk.new
+    desk.build_chief(title: "Director")
+    desk.save
+
+    found = IndexedDesk.find(desk.id)
+    assert found.chief
+    assert_equal "Director", found.chief.title
+  end
+
+  it "indexes children saved independently against a parent" do
+    class IndexedStation < AllFutures::Base
+      embeds_many :radios
+    end
+
+    class Radio < AllFutures::Base
+      attribute :indexed_station_id
+      attribute :channel, :string
+      embedded_in :indexed_station
+    end
+
+    station = IndexedStation.create
+    Radio.create(indexed_station_id: station.id, channel: "alpha")
+
+    found = IndexedStation.find(station.id)
+    assert_equal 1, found.radios.size
+    assert_equal "alpha", found.radios.first.channel
+  end
 end
 # rubocop:enable Lint/ConstantDefinitionInBlock

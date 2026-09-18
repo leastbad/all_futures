@@ -25,9 +25,21 @@ spy.persisted?     # => true
 spy.government_id  # => government.id
 ```
 
+## Lazy loading after find
+
+Like Active Record, `find` does **not** eager-load children. The first time you touch an association on a persisted parent, All Futures loads the members from a Redis SET index (`Government:<id>:spies`) and hydrates the proxy:
+
+```ruby
+found = Government.find(government.id)
+found.spies.size           # => 1
+found.spies.first.codename # => "alpha"
+```
+
+Children saved on their own (with the foreign key set) are added to the same index, so they show up when the parent is loaded later.
+
 ## Options
 
-- `foreign_key:` — the attribute on the child that stores the owner's id. Defaults to the owner's singular model name plus `_id` (for example `government_id`). The child must declare this attribute, or `AllFutures::MissingForeignKeyError` is raised on save.
+- `foreign_key:` — the attribute on the child that stores the owner's id. Defaults to the association name plus `_id` on `embedded_in` (for example `government_id`), and to the owner's singular model name plus `_id` on `embeds_one` / `embeds_many`. The child must declare this attribute, or `AllFutures::MissingForeignKeyError` is raised on save.
 - `autosave:` — when `true`, saving the owner also saves loaded children that have unsaved changes.
 - `dependent:` — what happens to children when the owner is destroyed:
   - `:destroy` — children are destroyed, running their callbacks
@@ -49,5 +61,5 @@ end
 
 ## Known limitations
 
-- Associations are held in memory. Finding an owner with `Model.find(id)` does **not** rehydrate its children from Redis; query them yourself with the foreign key, for example `Spy.where(government_id: government.id)`.
 - Children saved through their owner skip version creation (they are saved `without_versioning`), so a versioned child only accrues versions when saved directly.
+- The Redis SET index is an implementation detail; do not rely on its key names outside All Futures.

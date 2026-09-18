@@ -15,6 +15,8 @@ module AllFutures
     def delete
       catch(:abort) do
         _destroy_associations
+        _destroy_association_indexes
+        _remove_from_parent_indexes!
         _delete_record if persisted?
         @destroyed = true
         return freeze
@@ -217,6 +219,7 @@ module AllFutures
       _save_record
       @new_record = false
       @previously_new_record = true
+      _sync_embed_indexes!
       true
     end
 
@@ -423,6 +426,53 @@ module AllFutures
       end
     end
 
+    def _sync_embed_indexes!
+      _reflections.values.select { |reflection| reflection.macro == :embedded_in }.each do |reflection|
+        inverse = reflection.inverse_of
+        next unless inverse
+
+        parent_class = reflection.klass
+        next unless parent_class < AllFutures::Base
+
+        fk = reflection.options[:foreign_key]
+        current_parent_id = _read_attribute(fk)
+        previous_parent_id = begin
+          attribute_previously_was(fk)
+        rescue
+          nil
+        end
+
+        if previous_parent_id.present? && previous_parent_id.to_s != current_parent_id.to_s
+          AssociationIndex.remove(parent_class, previous_parent_id, inverse.name, id)
+        end
+
+        if current_parent_id.present?
+          AssociationIndex.add(parent_class, current_parent_id, inverse.name, id)
+        end
+      end
+    end
+
+    def _remove_from_parent_indexes!
+      _reflections.values.select { |reflection| reflection.macro == :embedded_in }.each do |reflection|
+        inverse = reflection.inverse_of
+        next unless inverse
+
+        parent_class = reflection.klass
+        next unless parent_class < AllFutures::Base
+
+        parent_id = _read_attribute(reflection.options[:foreign_key])
+        AssociationIndex.remove(parent_class, parent_id, inverse.name, id) if parent_id.present?
+      end
+    end
+
+    def _destroy_association_indexes
+      return unless id
+
+      _reflections.values.select { |reflection| [:embeds_many, :embeds_one].include?(reflection.macro) }.each do |reflection|
+        AssociationIndex.clear(self.class, id, reflection.name)
+      end
+    end
+
     def _save_version
       if new_record?
         @_current_version = 1
@@ -479,6 +529,7 @@ module AllFutures
     def _update_record
       _save_record
       @previously_new_record = false
+      _sync_embed_indexes!
       true
     end
 
