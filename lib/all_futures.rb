@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 require "active_entity/railtie"
-require "active_record/errors"
-require "active_record/integration"
+require "active_record" # for ActiveRecord::Integration (cache keys) and ActiveRecord::Base checks; internals can't be cherry-picked since Rails 7.1
 require "kredis"
 require "ulid"
 require "all_futures/association"
