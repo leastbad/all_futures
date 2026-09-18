@@ -1,4 +1,11 @@
 PATH
+  remote: ../activeentity
+  specs:
+    activeentity (6.3.0)
+      activemodel (>= 6.0, < 8)
+      activesupport (>= 6.0, < 8)
+
+PATH
   remote: .
   specs:
     all_futures (1.0.3)
@@ -25,9 +32,6 @@ GEM
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.1, >= 1.2.0)
-    activeentity (6.3.0)
-      activemodel (>= 6.0, < 8)
-      activesupport (>= 6.0, < 8)
     activemodel (7.0.2.4)
       activesupport (= 7.0.2.4)
     activerecord (7.0.2.4)
@@ -119,6 +123,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  activeentity!
   all_futures!
   faker (~> 2.20)
   magic_frozen_string_literal (~> 1.2.0)
