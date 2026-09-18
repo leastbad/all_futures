@@ -108,5 +108,45 @@ describe AllFutures::Versions do
     assert copy_b.save
     assert_equal "from a", Versioned.find(versioned.id).name
   end
+
+  describe "atomic locking" do
+    before { @previous_atomic = AllFutures.atomic_locking }
+    after { AllFutures.atomic_locking = @previous_atomic }
+
+    it "defaults to off" do
+      AllFutures.atomic_locking = false
+      refute AllFutures.atomic_locking
+    end
+
+    it "round-trips creates and updates when atomic locking is on" do
+      AllFutures.atomic_locking = true
+      versioned = Versioned.create(name: "atomic-first")
+
+      assert_equal 1, versioned.current_version
+      assert_equal "atomic-first", Versioned.find(versioned.id).name
+
+      versioned.update(name: "atomic-second")
+      found = Versioned.find(versioned.id)
+
+      assert_equal 2, found.current_version
+      assert_equal "atomic-second", found.name
+      assert_equal "atomic-first", found.version(1).attributes["name"]
+    end
+
+    it "raises RecordStale atomically when a newer version already exists" do
+      AllFutures.atomic_locking = true
+      versioned = Versioned.create(name: "first")
+
+      copy_a = Versioned.find(versioned.id)
+      copy_b = Versioned.find(versioned.id)
+
+      copy_a.update(name: "from a")
+
+      copy_b.name = "from b"
+      assert_raises(AllFutures::RecordStale) { copy_b.save }
+      assert_equal "from a", Versioned.find(versioned.id).name
+      assert_equal 1, copy_b.current_version # in-memory bump rolled back
+    end
+  end
 end
 # rubocop:enable Lint/ConstantDefinitionInBlock

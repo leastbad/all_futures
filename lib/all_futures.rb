@@ -4,6 +4,7 @@ require "active_entity/railtie"
 require "active_record" # for ActiveRecord::Integration (cache keys) and ActiveRecord::Base checks; internals can't be cherry-picked since Rails 7.1
 require "kredis"
 require "ulid"
+require "all_futures/configuration"
 require "all_futures/association"
 require "all_futures/attributes"
 require "all_futures/callbacks"

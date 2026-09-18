@@ -353,13 +353,74 @@ module AllFutures
       end
     end
 
+    # Redis Lua: compare current_version then SET, or return STALE.
+    # KEYS[1] = redis key, ARGV[1] = expected version ("" if new), ARGV[2] = JSON payload
+    ATOMIC_SAVE_LUA = <<~LUA.freeze
+      local key = KEYS[1]
+      local expected = ARGV[1]
+      local payload = ARGV[2]
+      local raw = redis.call('GET', key)
+
+      if not raw then
+        if expected == '' then
+          redis.call('SET', key, payload)
+          return 'OK'
+        end
+        return 'STALE'
+      end
+
+      local data = cjson.decode(raw)
+      local current = data['current_version']
+      if current == cjson.null or current == nil then
+        current = ''
+      else
+        current = tostring(current)
+      end
+
+      if current == expected then
+        redis.call('SET', key, payload)
+        return 'OK'
+      end
+      return 'STALE'
+    LUA
+
     def _save_record
       return true unless @_pending_write
 
-      _save_version if versioning_enabled?
-      touch
-      Kredis.json(@redis_key).value = _snapshot
+      if versioning_enabled? && AllFutures.atomic_locking
+        _save_record_atomically
+      else
+        _save_version if versioning_enabled?
+        touch
+        Kredis.json(@redis_key).value = _snapshot
+      end
       true
+    end
+
+    def _save_record_atomically
+      expected = @_current_version
+      previous_version = @_current_version
+      previous_versions = @_versions.dup
+
+      if new_record?
+        @_current_version = 1
+      else
+        @_current_version = @_current_version ? @_current_version.next : 1
+      end
+      @_versions[current_version] = {
+        "attributes" => attributes,
+        "updated_at" => Time.current
+      }
+      touch
+      payload = ActiveSupport::JSON.encode(_snapshot)
+      expected_arg = expected.nil? ? "" : expected.to_s
+
+      result = Kredis.redis.eval(ATOMIC_SAVE_LUA, keys: [@redis_key], argv: [expected_arg, payload])
+      if result == "STALE"
+        @_current_version = previous_version
+        @_versions = previous_versions
+        _raise_record_stale_error
+      end
     end
 
     def _save_version

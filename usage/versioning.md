@@ -70,7 +70,24 @@ copy_b.save # raises AllFutures::RecordStale
 
 Rescue `RecordStale` to implement retry or merge behavior. Saving a stale copy that has no changes of its own is a harmless no-op.
 
-Note that the version check and the write are not executed atomically, so an extremely tight race between two processes can still result in a lost update. Treat this as a guard rail, not a transactional guarantee. Models without versioning enabled have no stale protection: last write wins.
+By default the version check and the write are **not** atomic — two processes can both pass the check in a tight race and the later SET wins. Treat the default as a guard rail.
+
+### Atomic locking (optional)
+
+For apps that need a real compare-and-set, flip the app-wide switch:
+
+```ruby
+# config/application.rb
+config.all_futures.atomic_locking = true
+```
+
+Or outside Rails:
+
+```ruby
+AllFutures.atomic_locking = true
+```
+
+When enabled, versioned saves run a single Redis Lua script that reads `current_version`, compares it to the value you loaded, and either `SET`s the new snapshot or returns stale. One round trip, no lost updates between the check and the write. Non-versioned models are unaffected (last write still wins). Default is `false`.
 
 ## Storage notes
 
