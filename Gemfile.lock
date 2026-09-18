@@ -8,7 +8,7 @@ PATH
 PATH
   remote: .
   specs:
-    all_futures (1.0.3)
+    all_futures (2.0.0)
       activeentity (~> 6.3)
       activemodel (>= 7.1)
       activerecord (>= 7.1)
