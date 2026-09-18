@@ -207,6 +207,7 @@ PLATFORMS
 DEPENDENCIES
   all_futures!
   faker (~> 2.20)
+  json (< 3)
   magic_frozen_string_literal (~> 1.2.0)
   railties (>= 7.1)
   rake (~> 13.0, >= 13.0.3)
