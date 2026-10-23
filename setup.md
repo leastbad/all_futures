@@ -6,7 +6,9 @@ Installation is straight-forward: just add the gem to your `Gemfile`:
 gem "all_futures", "~> 2.0"
 ```
 
-**Ruby 3.1+** and **Rails 7.1+** (including 8.x) are required. The suite is green on Rails 8.1.
+**Ruby 3.3.13+** and **Rails 7.1+** (including 8.x) are required. The suite is green on Rails 8.1.
+
+2.0.1 raises the Ruby floor to 3.3.13, which includes the Onigmo compilation fixes from [Ruby’s 23 Oct 2026 advisory](https://www.ruby-lang.org/en/news/2026/10/23/regexp-fixes-for-gitlab-cves/) (GitLab CVE-2026-89078, CVE-2026-93577, CVE-2026-97229, and CVE-2026-110264).
 
 All Futures relies on Redis via the `kredis` gem (`~> 1.8`). Make sure you have a Redis server running and that you have followed the [Kredis installation instructions](https://github.com/rails/kredis#installation) to set up your `config/redis/shared.yml`.
 

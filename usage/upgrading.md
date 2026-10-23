@@ -6,10 +6,10 @@ Welcome back. If you were on the old auto-persist-everything train, this page is
 
 | | v1 era | v2 |
 |---|---|---|
-| Ruby | 2.7+ | **3.1+** |
+| Ruby | 2.7+ | **3.3.13+** |
 | Rails | 6.x-ish | **7.1+** (tested through 8.1) |
 | Persist on assign | yes (bracket writes) | **no — explicit `save`** |
-| Version number | 1.0.x | **2.0.0** |
+| Version number | 1.0.x | **2.0.1** |
 
 ## Gemfile
 

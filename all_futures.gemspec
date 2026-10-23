@@ -17,7 +17,7 @@ Gem::Specification.new do |gem|
 
   gem.files = Dir["lib/**/*", "bin/*", "[A-Z]*"]
 
-  gem.required_ruby_version = ">= 3.1"
+  gem.required_ruby_version = ">= 3.3.13"
 
   gem.add_dependency "activemodel", ">= 7.1"
   gem.add_dependency "activerecord", ">= 7.1"
